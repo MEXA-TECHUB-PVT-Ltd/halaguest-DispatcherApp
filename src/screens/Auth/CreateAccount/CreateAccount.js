@@ -90,7 +90,9 @@ const CreateAccount = ({navigation, route}) => {
         {top_tab_driver  ? (
  <AccountDetail/>
         ) : top_tab_payment ? (
-    <PaymentDetail/>
+    <PaymentDetail
+    nav={navigation}
+    />
         ) 
         : null}
 

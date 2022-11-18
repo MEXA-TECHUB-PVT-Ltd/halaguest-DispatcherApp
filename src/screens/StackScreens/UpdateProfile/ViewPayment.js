@@ -8,6 +8,9 @@ import {
   TextInput,
 } from 'react-native';
 
+///////////////////react native navigation///////////////
+import { useIsFocused } from '@react-navigation/native';
+
 ////////////////////app pakaage////////////////////
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -15,22 +18,19 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Snackbar } from 'react-native-paper';
 
 //////////////////////app components///////////////
-import CustomButtonhere from '..//Button/CustomButton';
-import CustomModal from '../Modal/CustomModal';
-
-/////////////////app icons////////////
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import CustomButtonhere from '../../../components/Button/CustomButton';
+import CustomHeader from '../../../components/Header/CustomHeader';
 
 ////////////////////redux////////////
 import {useSelector, useDispatch} from 'react-redux';
 import { setNavPlace ,setTopTabPayment,setTopTabDriver,
   setTopTabVehicle,setTopTabDocument,
 setPaymentSubmitId
-} from '../../redux/actions';
+} from '../../../redux/actions';
 
 ////////////////api////////////////
 import axios from 'axios';
-import { BASE_URL } from '../../utills/ApiRootUrl';
+import { BASE_URL } from '../../../utills/ApiRootUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -42,20 +42,16 @@ import {
 
 /////////////////////app styles////////////
 import styles from './styles';
-import Colors from '../../utills/Colors';
-import Inputstyles from '../../styles/GlobalStyles/Inputstyles';
+import Colors from '../../../utills/Colors';
+import Inputstyles from '../../../styles/GlobalStyles/Inputstyles';
 
-//////////////////ap imags///////////////
-import { appImages } from '../../constant/images';
 
-import { useNavigation } from '@react-navigation/native';
-
-const PaymentDetail = ({props}) => {
-
-  const navigation = useNavigation();
+const ViewPaymentDetail = ({navigation}) => {
+    ////////////isfocused//////////
+    const isfocussed = useIsFocused()
 
   /////////////////////////redux///////////////////
-  const {hoteltype, phone_no,payment_submit_id,driver_submit_id  } =
+  const {hoteltype, phone_no,  } =
     useSelector(state => state.userReducer);
   const dispatch = useDispatch();
 
@@ -87,109 +83,35 @@ const PaymentDetail = ({props}) => {
   const [CVV, setCVV]=useState('')
   const [Expiry, setExpiry]=useState('')
 
+  const GetAcountPament=async() => {
+    var payment= await AsyncStorage.getItem('Payment_id')
+    console.log("order request function",payment)
 
-  //////////////////////Api Calling/////////////////
-  const DispatcherPayment = async () => {
-
-    axios({
-      method: 'POST',
-      url: BASE_URL + 'api/paymentDetail/createPayment',
-      data: {
-        bank_name: bank_name,
-        account_holder_name:account_holder_name,
-        account_number:account_number,
-        iban: iban,
-        swift_code: swift_code 
-      },
+    await axios({
+      method: 'GET',
+      url: BASE_URL+'api/paymentDetail/specificPayment/'+payment,
     })
-      .then(function (response) {
-        console.log('response', JSON.stringify(response.data));
-        dispatch(setPaymentSubmitId(response.data.data._id))
-          setloading(0);
-          setdisable(0);
-          setModalVisible(true)
-        // dispatch(setTopTabDriver(false))
-        // dispatch(setTopTabVehicle(false))
-        //  dispatch(setTopTabPayment(false))
-        //  dispatch(setTopTabDocument(true))
-
-      })
-      .catch(function (error) {
-        console.log('error', error);
-      });
-  };
-
-  useEffect(() => {}, []);
-
-  const PaymentValidation = async () => {
-    // input validation
-    if (bank_name == '') {
-      setsnackbarValue({value: 'Please Enter Bank Name', color: 'red'});
-      setVisible('true');
-    } else if (account_holder_name == '') {
-      setsnackbarValue({value: 'Please Enter Account Holder Name', color: 'red'});
-      setVisible('true');
-    } 
-     else if (account_number == '') {
-      setsnackbarValue({value: 'Please Enter Account Number', color: 'red'});
-      setVisible('true');
-    } 
-    // else if (account_number.length != 16) {
-    //   setsnackbarValue({value: "Please Enter 16 digit Valid Card", color: 'red'});
-    //   setVisible('true');
-    // }
-
-    // else if (Expiry=='') {
-    //   setsnackbarValue({value: "Please Enter month / Year", color: 'red'});
-    //   setVisible('true');
-    //   }
-  // else if (CVV=='') {
-  //   setsnackbarValue({value: "Please Enter CVV", color: 'red'});
-  //   setVisible('true');
-
-  //   }
-  //   else if (CVV.length != 3) {
-  //     setsnackbarValue({value: "Please Enter 3 digit Valid CVV", color: 'red'});
-  //     setVisible('true');
-  //   }
-    else if (iban=='') {
-      setsnackbarValue({value: "Please Enter IBAN", color: 'red'});
-      setVisible('true');
-  
-      }
-      else if (swift_code=='') {
-        setsnackbarValue({value: "Please Enter Swift Code", color: 'red'});
-        setVisible('true');
-    
-        }
-    else {
-          setloading(1);
-         setdisable(1);
-         DispatcherPayment()
-  
+    .then(function (response) {
+      console.log("response get here dispatcher payment", JSON.stringify(response.data))
+      setBankName(response.data.data[0].bank_name)
+      setAccountHolderName(response.data.data[0].account_holder_name)
+      setAccountNumber(response.data.data[0].account_number)
+      setiban(response.data.data[0].iban)
+      setSwiftCode(response.data.data[0].swift_code)
+      //setCVV(response.data[0].state)
+      setshowdaywise(response.data.data[0].expiry_date)
+    })
+    .catch(function (error) {
+      console.log("error", error)
+    })
     }
-  };
+  useEffect(() => {
+    if (isfocussed) {
+        GetAcountPament()
+    }
 
-        //////////////////////Api Calling/////////////////
-        const updateDispatcherDetail = async () => {
-          console.log('here ids',payment_submit_id,driver_submit_id)
-              axios({
-                method: 'PUT',
-                url: BASE_URL + 'api/dispacher/updateDispacher',
-                data: {
-                  _id: driver_submit_id,
-                  payment_detail_id:payment_submit_id
-                },
-              })
-                .then(function (response) {
-                  console.log('upadated response', JSON.stringify(response.data));
-                  setModalVisible(false),
-                  navigation.navigate('BottomTab')
-                })
-                .catch(function (error) {
-                  console.log('error', error);
-                });
-            };
+  }, [isfocussed]);
+
     ////////////////datetime picker states////////////////
     const [date, setDate] = useState(new Date());
     const [mode, setMode] = useState('date');
@@ -252,11 +174,22 @@ const PaymentDetail = ({props}) => {
       }}
       />
       )}
+           <CustomHeader
+          headerlabel={'Payment Details'}
+          iconPress={() => {
+            navigation.goBack();
+          }}
+          icon={'chevron-back'}
+          // searchicon={'search'}
+          //type={'crypto'}
+          //onpresseacrh={() => onSearch()}
+        />
           <View style={{flex: 1}}>
             <View style={Inputstyles.inputview}>
               <Text style={Inputstyles.inputtoptext}>Bank Name</Text>
                 <View style={Inputstyles.action}>
                   <TextInput
+                  value={bank_name}
                    onChangeText={setBankName}
                     returnKeyType={'next'}
                     onSubmitEditing={() => {
@@ -266,6 +199,7 @@ const PaymentDetail = ({props}) => {
                     autoFocus={true}
                     placeholderTextColor={Colors.inputtextcolor}
                     style={Inputstyles.input}
+                    editable={false}
                   />
                 </View>
 
@@ -275,6 +209,7 @@ const PaymentDetail = ({props}) => {
               <View style={Inputstyles.action}>
                 <TextInput
                   ref={ref_input2}
+                  value={account_holder_name}
                   onChangeText={setAccountHolderName}
                   returnKeyType={'next'}
                   onSubmitEditing={() => {
@@ -283,12 +218,14 @@ const PaymentDetail = ({props}) => {
                   blurOnSubmit={false}
                   placeholderTextColor={Colors.inputtextcolor}
                   style={Inputstyles.input}
+                  editable={false}
                 />
               </View>
               <Text style={Inputstyles.inputtoptext}>Account Number</Text>
               <View style={Inputstyles.action}>
                 <TextInput
                   ref={ref_input3}
+                  value={account_number}
                   onChangeText={setAccountNumber}
                   maxLength={16}    
                   returnKeyType={'next'}
@@ -299,13 +236,15 @@ const PaymentDetail = ({props}) => {
                   placeholderTextColor={Colors.inputtextcolor}
                   style={Inputstyles.input}
                   keyboardType='number-pad'
+                  editable={false}
                 />
               </View>
               <Text style={Inputstyles.inputtoptext}>Expiry Date</Text>
-              <TouchableOpacity  onPress={showDatepicker}>
+     
               <View style={Inputstyles.action}>
                 <TextInput
                   ref={ref_input4}
+                  //value={account_holder_name}
                   onChangeText={onChange}
                   value={showdaywise}
                   returnKeyType={'next'}
@@ -318,11 +257,12 @@ const PaymentDetail = ({props}) => {
                   editable={false}
                 />
               </View>
-              </TouchableOpacity>
+    
               {/* <Text style={Inputstyles.inputtoptext}>CVV</Text>
               <View style={Inputstyles.action}>
                 <TextInput
                   ref={ref_input5}
+                  value={CVV}
                   onChangeText={setCVV}
                   maxLength={3}    
                   returnKeyType={'next'}
@@ -333,12 +273,14 @@ const PaymentDetail = ({props}) => {
                   placeholderTextColor={Colors.inputtextcolor}
                   style={Inputstyles.input}
                   keyboardType='number-pad'
+                  editable={false}
                 />
               </View> */}
               <Text style={Inputstyles.inputtoptext}>IBAN</Text>
               <View style={Inputstyles.action}>
                 <TextInput
                   ref={ref_input6}
+                  value={iban}
                   onChangeText={setiban}
                   returnKeyType={'next'}
                   onSubmitEditing={() => {
@@ -348,30 +290,34 @@ const PaymentDetail = ({props}) => {
                   placeholderTextColor={Colors.inputtextcolor}
                   autoCapitalize="none"
                   style={Inputstyles.input}
+                  editable={false}
                 />
               </View>
               <Text style={Inputstyles.inputtoptext}>Swift Code</Text>
               <View style={Inputstyles.action}>
                 <TextInput
                   ref={ref_input7}
+                  value={swift_code}
                   onChangeText={setSwiftCode}
                   placeholderTextColor={Colors.inputtextcolor}
                   autoCapitalize="none"
                   style={Inputstyles.input}
+                  editable={false}
                 />
               </View>
             </View>
 
             <View style={{marginBottom: hp(2), marginTop: hp(12)}}>
               <CustomButtonhere
-                title={'NEXT'}
+                title={'UPDATE PAYMENT DETAILS'}
                 widthset={'78%'}
                 topDistance={0}
                 loading={loading}
                 disabled={disable}
                 onPress={
-                  () => PaymentValidation()
-                  // navigation.navigate('Drawerroute')
+                  () =>
+                  // PaymentValidation()
+                 navigation.navigate('UpdatePaymentDetail')
                 }
               />
             </View>
@@ -387,19 +333,10 @@ const PaymentDetail = ({props}) => {
           }}>
           {snackbarValue.value}
         </Snackbar>
-        <CustomModal 
-                modalVisible={modalVisible}
-                CloseModal={() => setModalVisible(false)}
-                Icon={appImages.CheckCircle}
-                text={'Account Created Successfully'}
-                leftbuttontext={'CANCEL'}
-                rightbuttontext={'OK'}
- onPress={()=> {updateDispatcherDetail()}}
-                /> 
 
       </SafeAreaView>
     </ScrollView>
   );
 };
 
-export default PaymentDetail;
+export default ViewPaymentDetail;

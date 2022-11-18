@@ -87,7 +87,7 @@ const Profile = ({navigation}) => {
                     marginBottom:hp(2)}}>
                <SettingsMenu
        label={'Payment Details'}
-       labelPress={()=>navigation.navigate('UpdatePaymentDetail')}
+       labelPress={()=>navigation.navigate('ViewPaymentDetail')}
        />
 
                     </View>

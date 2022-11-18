@@ -17,6 +17,7 @@ import { Snackbar } from 'react-native-paper';
 //////////////////////app components///////////////
 import CustomButtonhere from '../../../components/Button/CustomButton';
 import CustomHeader from '../../../components/Header/CustomHeader';
+import CustomModal from '../../../components/Modal/CustomModal';
 
 ////////////////////redux////////////
 import {useSelector, useDispatch} from 'react-redux';
@@ -42,6 +43,8 @@ import styles from './styles';
 import Colors from '../../../utills/Colors';
 import Inputstyles from '../../../styles/GlobalStyles/Inputstyles';
 
+///////////////////app images////////////
+import { appImages } from '../../../constant/images';
 
 const UpdatePaymentDetail = ({navigation}) => {
 
@@ -80,12 +83,14 @@ const UpdatePaymentDetail = ({navigation}) => {
 
 
   //////////////////////Api Calling/////////////////
-  const DriverPayment = async () => {
-
+  const UpdatePayment = async () => {
+    var payment= await AsyncStorage.getItem('Payment_id')
+    console.log("order request function",payment)
     axios({
-      method: 'POST',
-      url: BASE_URL + 'api/paymentDetail/createPayment',
+      method: 'PUT',
+      url: BASE_URL + 'api/paymentDetail/updatePayment',
       data: {
+        _id: payment,
         bank_name: bank_name,
         account_holder_name:account_holder_name,
         account_number:account_number,
@@ -95,70 +100,43 @@ const UpdatePaymentDetail = ({navigation}) => {
     })
       .then(function (response) {
         console.log('response', JSON.stringify(response.data));
-        dispatch(setPaymentSubmitId(response.data.data._id))
-          setloading(0);
-          setdisable(0);
-        dispatch(setTopTabDriver(false))
-        dispatch(setTopTabVehicle(false))
-         dispatch(setTopTabPayment(false))
-         dispatch(setTopTabDocument(true))
-
+        //dispatch(setPaymentSubmitId(response.data.data._id))
+          // setloading(0);
+          // setdisable(0);
+          setModalVisible(true)
       })
       .catch(function (error) {
         console.log('error', error);
       });
   };
+  const GetAcountPament=async() => {
+    var payment= await AsyncStorage.getItem('Payment_id')
+    console.log("order request function",payment)
 
-  useEffect(() => {}, []);
-
-  const PaymentValidation = async () => {
-    // input validation
-    if (bank_name == '') {
-      setsnackbarValue({value: 'Please Enter Bank Name', color: 'red'});
-      setVisible('true');
-    } else if (account_holder_name == '') {
-      setsnackbarValue({value: 'Please Enter Account Holder Name', color: 'red'});
-      setVisible('true');
-    } 
-     else if (account_number == '') {
-      setsnackbarValue({value: 'Please Enter Account Number', color: 'red'});
-      setVisible('true');
-    } 
-    else if (account_number.length != 16) {
-      setsnackbarValue({value: "Please Enter 16 digit Valid Card", color: 'red'});
-      setVisible('true');
+    await axios({
+      method: 'GET',
+      url: BASE_URL+'api/paymentDetail/specificPayment/'+payment,
+    })
+    .then(function (response) {
+      console.log("response get here dispatcher payment", JSON.stringify(response.data))
+      setBankName(response.data.data[0].bank_name)
+      setAccountHolderName(response.data.data[0].account_holder_name)
+      setAccountNumber(response.data.data[0].account_number)
+      setiban(response.data.data[0].iban)
+      setSwiftCode(response.data.data[0].swift_code)
+      //setCVV(response.data[0].state)
+      setshowdaywise(response.data.data[0].expiry_date)
+    })
+    .catch(function (error) {
+      console.log("error", error)
+    })
     }
-
-    // else if (Expiry=='') {
-    //   setsnackbarValue({value: "Please Enter month / Year", color: 'red'});
-    //   setVisible('true');
-    //   }
-  else if (CVV=='') {
-    setsnackbarValue({value: "Please Enter CVV", color: 'red'});
-    setVisible('true');
-
-    }
-    else if (CVV.length != 3) {
-      setsnackbarValue({value: "Please Enter 3 digit Valid CVV", color: 'red'});
-      setVisible('true');
-    }
-    else if (iban=='') {
-      setsnackbarValue({value: "Please Enter IBAN", color: 'red'});
-      setVisible('true');
+  useEffect(async() => {
   
-      }
-      else if (swift_code=='') {
-        setsnackbarValue({value: "Please Enter Swift Code", color: 'red'});
-        setVisible('true');
-    
-        }
-    else {
-          setloading(1);
-         setdisable(1);
-      DriverPayment()
-  
-    }
-  };
+    GetAcountPament()
+  }, []);
+
+
     ////////////////datetime picker states////////////////
     const [date, setDate] = useState(new Date());
     const [mode, setMode] = useState('date');
@@ -236,6 +214,7 @@ const UpdatePaymentDetail = ({navigation}) => {
               <Text style={Inputstyles.inputtoptext}>Bank Name</Text>
                 <View style={Inputstyles.action}>
                   <TextInput
+                  value={bank_name}
                    onChangeText={setBankName}
                     returnKeyType={'next'}
                     onSubmitEditing={() => {
@@ -254,6 +233,7 @@ const UpdatePaymentDetail = ({navigation}) => {
               <View style={Inputstyles.action}>
                 <TextInput
                   ref={ref_input2}
+                  value={account_holder_name}
                   onChangeText={setAccountHolderName}
                   returnKeyType={'next'}
                   onSubmitEditing={() => {
@@ -268,6 +248,7 @@ const UpdatePaymentDetail = ({navigation}) => {
               <View style={Inputstyles.action}>
                 <TextInput
                   ref={ref_input3}
+                  value={account_number}
                   onChangeText={setAccountNumber}
                   maxLength={16}    
                   returnKeyType={'next'}
@@ -285,6 +266,7 @@ const UpdatePaymentDetail = ({navigation}) => {
               <View style={Inputstyles.action}>
                 <TextInput
                   ref={ref_input4}
+                  //value={account_holder_name}
                   onChangeText={onChange}
                   value={showdaywise}
                   returnKeyType={'next'}
@@ -298,10 +280,11 @@ const UpdatePaymentDetail = ({navigation}) => {
                 />
               </View>
               </TouchableOpacity>
-              <Text style={Inputstyles.inputtoptext}>CVV</Text>
+              {/* <Text style={Inputstyles.inputtoptext}>CVV</Text>
               <View style={Inputstyles.action}>
                 <TextInput
                   ref={ref_input5}
+                  value={CVV}
                   onChangeText={setCVV}
                   maxLength={3}    
                   returnKeyType={'next'}
@@ -313,11 +296,12 @@ const UpdatePaymentDetail = ({navigation}) => {
                   style={Inputstyles.input}
                   keyboardType='number-pad'
                 />
-              </View>
+              </View> */}
               <Text style={Inputstyles.inputtoptext}>IBAN</Text>
               <View style={Inputstyles.action}>
                 <TextInput
                   ref={ref_input6}
+                  value={iban}
                   onChangeText={setiban}
                   returnKeyType={'next'}
                   onSubmitEditing={() => {
@@ -333,6 +317,7 @@ const UpdatePaymentDetail = ({navigation}) => {
               <View style={Inputstyles.action}>
                 <TextInput
                   ref={ref_input7}
+                  value={swift_code}
                   onChangeText={setSwiftCode}
                   placeholderTextColor={Colors.inputtextcolor}
                   autoCapitalize="none"
@@ -343,15 +328,15 @@ const UpdatePaymentDetail = ({navigation}) => {
 
             <View style={{marginBottom: hp(2), marginTop: hp(12)}}>
               <CustomButtonhere
-                title={'UPDATE PAYMENT DETAILS'}
+                title={'UPDATE'}
                 widthset={'78%'}
                 topDistance={0}
                 loading={loading}
                 disabled={disable}
                 onPress={
                   () =>
-                  // PaymentValidation()
-                 navigation.navigate('BottomTab')
+                  UpdatePayment()
+                 //navigation.navigate('BottomTab')
                 }
               />
             </View>
@@ -367,6 +352,15 @@ const UpdatePaymentDetail = ({navigation}) => {
           }}>
           {snackbarValue.value}
         </Snackbar>
+        <CustomModal 
+                modalVisible={modalVisible}
+                CloseModal={() => setModalVisible(false)}
+                Icon={appImages.CheckCircle}
+                text={'Payment Updated Successfully'}
+                leftbuttontext={'CANCEL'}
+                rightbuttontext={'OK'}
+ onPress={()=> {GetAcountPament(), setModalVisible(false),navigation.goBack()}}
+                /> 
       </SafeAreaView>
     </ScrollView>
   );

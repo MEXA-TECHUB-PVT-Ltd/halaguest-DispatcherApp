@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,TextInput,
-  Image, View, Text, TouchableOpacity, Button,StatusBar
+  Image, View, Text, TouchableOpacity,StatusBar
 } from 'react-native';
 
 ////////////paper papkage///////////////
@@ -10,43 +10,25 @@ import { Checkbox,Snackbar } from 'react-native-paper';
 ///////////////////app components////////////////
 import CustomButtonhere from '../../../components/Button/CustomButton';
 
+/////////////////country picker/////////////
 import CountryPicker from "react-native-country-picker-modal"
-import Icon from 'react-native-vector-icons/MaterialIcons';
-
 
 //////////////////app styles///////////
 import styles from './styles';
 import Authtextstyles from '../../../styles/GlobalStyles/Authtextstyles';
-import Authlaststyles from '../../../styles/GlobalStyles/Authlaststyles';
 import Logostyles from '../../../styles/GlobalStyles/Logostyles';
 import Colors from '../../../utills/Colors';
-
-
-////////////////////redux////////////
-import { useSelector, useDispatch } from 'react-redux';
-import { setPhoneNumber,setLoginUser } from '../../../redux/actions';
 
 /////////////////////app images///////////////////
 import { appImages } from '../../../constant/images';
 import { widthPercentageToDP as wp ,heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
-////////////////api////////////////
-import axios from 'axios';
-import { BASE_URL } from '../../../utills/ApiRootUrl';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 const Login = ({ navigation }) => {
-
-    /////////////redux states///////
-    const { HotelTypes,login_user_id,phone_no} = useSelector(state => state.userReducer);
-    const dispatch = useDispatch();
 
     ///////////////////checkbox state///////////////////
     const [checked, setChecked] = React.useState(false);
 
        /////////button states/////////////
- const [loading, setloading] = useState(0);
- const [disable, setdisable] = useState(0);
  const [visible, setVisible] = useState(false);
  const [snackbarValue, setsnackbarValue] = useState({value: '', color: ''});
  const onDismissSnackBar = () => setVisible(false);
@@ -56,28 +38,6 @@ const Login = ({ navigation }) => {
   const [countryCode, setCountryCode] = useState('92');
   const [number, setnumber] = useState('');
 
-  //////////////////////Api Calling Login/////////////////
-  const Login = async () => {
-        console.log('userid:',BASE_URL + 'api/phoneNo/logins',countryCode,number);
-    axios({
-      method: 'POST',
-      url: BASE_URL + 'api/phoneNo/logins',
-      data: {
-        table_name: 'dispacher',
-        phoneno: countryCode+number,
-        device_token: 'dfdf3434' 
-      },
-    })
-      .then(function (response) {
-        console.log('response', JSON.stringify(response.data));
-        dispatch(setPhoneNumber(response.data.data.phoneno))
-        dispatch(setLoginUser(response.data.data._id))
-        //navigation.navigate('Verification',{Phonenumber:number})
-      })
-      .catch(function (error) {
-        console.log('error', error);
-      });
-  };
   //////////////////////// API forms validations////////////////////////
   const LoginValidation = async () => {
     // input validation
@@ -85,11 +45,12 @@ const Login = ({ navigation }) => {
       setsnackbarValue({value: 'Please Enter Phone Number', color: 'red'});
       setVisible('true');
     } 
-
+   else if (checked == false) {
+      setsnackbarValue({value: 'Please Checked the Terms and Condition', color: 'red'});
+      setVisible('true');
+    } 
     else {
-      setloading(1);
-      setdisable(1);
-      Login()
+      navigation.navigate('Verification',{Phonenumber:countryCode+number})
     }
   };
 
@@ -132,7 +93,6 @@ const Login = ({ navigation }) => {
 <View style={Authtextstyles.textview}>
             <Text style={Authtextstyles.toptext}>Sign In</Text>
             <Text style={Authtextstyles.subtext}>Please enter your phone number
-            {phone_no+login_user_id}
             </Text>
           </View>
 
@@ -184,7 +144,7 @@ const Login = ({ navigation }) => {
         <CustomButtonhere
             title={'SIGN IN'}
             widthset={78}
-            topDistance={32}
+            topDistance={30}
             onPress={() => 
              {LoginValidation()}
             }
@@ -196,13 +156,15 @@ const Login = ({ navigation }) => {
         </TouchableOpacity>
       </View> */}
               <Snackbar
-          duration={400}
+          duration={500}
           visible={visible}
           onDismiss={onDismissSnackBar}
           style={{
             backgroundColor: snackbarValue.color,
-            marginBottom:'20%',
+            marginBottom:hp(12),
             zIndex: 999,
+            alignSelf:"center",
+            marginLeft:wp(15)
           }}>
           {snackbarValue.value}
         </Snackbar>

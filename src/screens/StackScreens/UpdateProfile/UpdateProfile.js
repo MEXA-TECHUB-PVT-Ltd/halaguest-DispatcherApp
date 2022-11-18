@@ -9,13 +9,14 @@ import CustomHeader from '../../../components/Header/CustomHeader';
 import CamerBottomSheet from '../../../components/CameraBottomSheet/CameraBottomSheet';
 import CustomButtonhere from '../../../components/Button/CustomButton';
 import HotelTypes from '../../../components/Dropdowns/HotelTypes';
+import CustomModal from '../../../components/Modal/CustomModal';
 
-//////////////app pakages//////////////////
+//////////////app pakages//////////////
 import ImagePicker from 'react-native-image-crop-picker';
 
 ////////////////////redux////////////
 import { useSelector, useDispatch } from 'react-redux';
-import { setName, setAge } from '../../../redux/actions';
+import { setNavPlace,setUserImage} from '../../../redux/actions';
 
 ////////////////api////////////////
 import axios from 'axios';
@@ -36,8 +37,8 @@ import { appImages } from '../../../constant/images';
 
 
 const UpdateProfile = ({ navigation,route }) => {
-console.log('previous data:', route.params)
 
+const [maxheight, setHeight] = useState(52)
     ////////////prevous data States///////////////
     const [predata] = useState(route.params);
 
@@ -94,13 +95,13 @@ console.log('previous data:', route.params)
     //Modal States
     const [modalVisible, setModalVisible] = useState(false);
 
-    const { hoteltype,phone_no } = useSelector(state => state.userReducer);
+    const { hoteltype,phone_no,user_image } = useSelector(state => state.userReducer);
     const dispatch = useDispatch();
 
              /////////TextInput References///////////
              const ref_input2 = useRef();
 
-             const [selectedimage, setselectedimage] = useState(false);
+             const [selectedimage, setselectedimage] = useState();
                    /////////////////image api calling///////////////
       const Uploadpic =(props)=>{
 console.log("here url", BASE_URL + 'upload-image')
@@ -118,7 +119,7 @@ console.log("here url", BASE_URL + 'upload-image')
         }
       ]).then((resp) => {
         console.log('here Profile image:',resp.data)
-        setselectedimage(JSON.parse(resp.data))
+        setselectedimage(resp.data)
        // CreateUserProfile(resp.data)
       }).catch((err) => {
         console.log('here error:',err)
@@ -129,59 +130,72 @@ console.log("here url", BASE_URL + 'upload-image')
   ///////////////data states////////////////////
   const [name, setName] = React.useState();
   const [email, setEmail] = React.useState();
-  const [gender,  setGender] = React.useState();
   const [city,  setCity] = React.useState();
   const [state,  setState] = React.useState();
   const [zipcode,  setZipcode] = React.useState();
   const [country,  setCountry] = React.useState();
   const [street_address,  setStreet_address] = React.useState();
 
- //////////////////////Api Calling/////////////////
- const Createuser = async() => {
-  var user= await AsyncStorage.getItem('Userid')
-  var date=new Date()
-  console.log("userid:",date,selectedimage)
+  const UpdateAcount = async() => {
+    var user= await AsyncStorage.getItem('Userid')
+    var date=new Date()
+    console.log("userid:",date,selectedimage,user)
+  
+      axios({
+        method: 'PUT',
+        url: BASE_URL + 'api/dispacher/updateDispacher',
+        data: {
+          _id:user,
+          img: user_image,
+          email: email,
+          city: city,
+          state: state,
+          zip_code: zipcode,
+          country: country,
+          street_address: street_address,
+          name_of_company: name,
+          phoneNo: phone_no,
+          created_at:date,
+          //status: 'block',
+          device_token: '354ref' 
+        },
+      })
+        .then(async function (response) {
+          console.log("response", JSON.stringify(response.data))
+          setModalVisible(true)
+          //dispatch(setLoginUser(response.data.data._id))
+          //await AsyncStorage.setItem('Userid',response.data._id);
+        })
+        .catch(function (error) {
+          console.log("error", error)
+        })
+    }
+  const GetAcountDetail=async() => {
+    var user= await AsyncStorage.getItem('Userid')
+    console.log("order request function",user)
 
-    axios({
-      method: 'POST',
-      url: BASE_URL + 'api/hotel/createHotel',
-      data: {
-        hotel_name: hoteltype,
-        img: selectedimage,
-        email: email,
-        city: city,
-        state: state,
-        zip_code: zipcode,
-        country: country,
-        street_address: street_address,
-        name: name,
-        phoneNo: phone_no,
-        created_at:date,
-        status: 'block',
-        device_token: '354ref' 
-      },
+    await axios({
+      method: 'GET',
+      url: BASE_URL+'api/dispacher/specificDispacher/'+user,
     })
-      .then(function (response) {
-        console.log("response", JSON.stringify(response.data))
-        // if (response.data === "Email Already Exist") {
-        //   setloading(0);
-        //   setdisable(0);
-        //   alert("Email Already Exist,Enter other email")
-        // }
-        // else {
-        //   setloading(0);
-        //   setdisable(0);
-        //   navigation.navigate('Subscribe', response.data)
-        // }
-
-
-      })
-      .catch(function (error) {
-        console.log("error", error)
-      })
-  }
-
+    .then(function (response) {
+      console.log("response get here dispatcher", JSON.stringify(response.data))
+      dispatch(setUserImage(response.data[0].img))
+      setImage(BASE_URL+response.data[0].img)
+      setName(response.data[0].name_of_company)
+      setEmail(response.data[0].email)
+      setCity(response.data[0].city)
+      setCountry(response.data[0].country)
+      setState(response.data[0].state)
+      setZipcode(response.data[0].zip_code)
+      setStreet_address(response.data[0].street_address)
+    })
+    .catch(function (error) {
+      console.log("error", error)
+    })
+    }
     useEffect(() => {
+      GetAcountDetail()
     }, []);
 
     return (
@@ -197,36 +211,45 @@ console.log("here url", BASE_URL + 'upload-image')
                 icon={'chevron-back'}
 
             />  
-<TouchableOpacity onPress={()=> refRBSheet.current.open()}>
-<View style={styles.userimage}>
-{image != '' ?
+       <TouchableOpacity onPress={() =>
+                             {refRBSheet.current.open(),
+                                dispatch(setNavPlace('Account_Detail'))
+                                }
+                 }>
+              <View style={styles.userimage}>
+                {user_image != '' ? (
                   <Image
-                    source={{ uri: image }}
+                    source={{uri: BASE_URL+user_image}}
                     style={styles.image}
-                    resizeMode='contain'
+                    resizeMode="contain"
                   />
-                :
-            <Image
-            source={appImages.User}
-            style={{ width: wp(12), height: hp(8),
-             }}
-             resizeMode='contain'
-          />
-              }
-          <Image
-            source={appImages.Camera}
-            style={{ width: wp(10), height: hp(5),position:"absolute",bottom:0,right:0
-             }}
-             resizeMode='contain'
-          />
-</View>
-</TouchableOpacity>
+                ) : (
+                  <Image
+                    source={appImages.User}
+                    style={{width: wp(12), height: hp(8)}}
+                    resizeMode="contain"
+                  />
+                )}
+
+                <Image
+                  source={appImages.Camera}
+                  style={{
+                    width: wp(10),
+                    height: hp(5),
+                    position: 'absolute',
+                    bottom: 0,
+                    right: 0,
+                  }}
+                  resizeMode="contain"
+                />
+              </View>
+            </TouchableOpacity>
 <View style={Inputstyles.inputview}>
-  <Text style={Inputstyles.inputtoptext}>Name</Text>
+  <Text style={Inputstyles.inputtoptext}>Comapany Name</Text>
   <TouchableOpacity onPress={()=> refddRBSheet.current.open()} >
   <View style={Inputstyles.action}>
             <TextInput
-            value={hoteltype}
+            value={name}
               //placeholder="Username Here"
               onChangeText={setName}
               returnKeyType={"next"}
@@ -244,19 +267,20 @@ console.log("here url", BASE_URL + 'upload-image')
           <View style={Inputstyles.action}>
             <TextInput
                   ref={ref_input2}
-                  //value={email}
+                  value={email}
               //placeholder="Example@gmail.com"
               onChangeText={setEmail}
               placeholderTextColor={Colors.inputtextcolor}
               autoCapitalize="none"
               style={Inputstyles.input}
+              editable={false}
             />
           </View>
           <Text style={Inputstyles.inputtoptext}>City</Text>
           <View style={Inputstyles.action}>
             <TextInput
                   ref={ref_input2}
-                 // value={email}
+                  value={city}
               //placeholder="Example@gmail.com"
               onChangeText={setCity}
               placeholderTextColor={Colors.inputtextcolor}
@@ -268,7 +292,7 @@ console.log("here url", BASE_URL + 'upload-image')
           <View style={Inputstyles.action}>
             <TextInput
                   ref={ref_input2}
-                 // value={email}
+                 value={state}
               //placeholder="Example@gmail.com"
               onChangeText={setState}
               placeholderTextColor={Colors.inputtextcolor}
@@ -281,7 +305,7 @@ console.log("here url", BASE_URL + 'upload-image')
             
             <TextInput
                   ref={ref_input2}
-                  //value={email}
+                  value={zipcode}
               //placeholder="Example@gmail.com"
               onChangeText={setZipcode}
               placeholderTextColor={Colors.inputtextcolor}
@@ -294,7 +318,7 @@ console.log("here url", BASE_URL + 'upload-image')
             
             <TextInput
                   ref={ref_input2}
-                  //value={email}
+                  value={country}
               //placeholder="Example@gmail.com"
               onChangeText={setCountry}
               placeholderTextColor={Colors.inputtextcolor}
@@ -307,12 +331,17 @@ console.log("here url", BASE_URL + 'upload-image')
             
             <TextInput
                   ref={ref_input2}
-                  //value={email}
-              //placeholder="Example@gmail.com"
-              onChangeText={setEmail}
+                  value={street_address}
+              onChangeText={setStreet_address}
               placeholderTextColor={Colors.inputtextcolor}
-              autoCapitalize="none"
-              style={Inputstyles.input}
+              style={[Inputstyles.input,{height:maxheight===56?hp(75):hp(18)}]}
+              multiline={true}
+              maxLength={200}
+              numberOfLines={2.5}
+              onContentSizeChange={e => 
+{                console.log('heretext htt',e.nativeEvent.contentSize.height)
+                setHeight(e.nativeEvent.contentSize.height)}
+              }
             />
           </View>
         </View>
@@ -324,8 +353,8 @@ console.log("here url", BASE_URL + 'upload-image')
               widthset={'78%'}
               topDistance={0}
               onPress={() => 
-                Createuser()
-               // navigation.navigate('Drawerroute')
+                UpdateAcount()
+               // navigation.navigate('ViewPaymentDetail')
               }
             />
           </View>
@@ -342,6 +371,15 @@ console.log("here url", BASE_URL + 'upload-image')
           onClose={() => refddRBSheet.current.close()}
           title={'From Gallery'}
         />
+                  <CustomModal 
+                modalVisible={modalVisible}
+                CloseModal={() => setModalVisible(false)}
+                Icon={appImages.CheckCircle}
+                text={'Profile Updated Successfully'}
+                leftbuttontext={'CANCEL'}
+                rightbuttontext={'OK'}
+ onPress={()=> {GetAcountDetail(), setModalVisible(false),navigation.goBack()}}
+                /> 
     </SafeAreaView>
 </ScrollView>
     )

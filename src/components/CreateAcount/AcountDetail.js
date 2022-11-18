@@ -102,12 +102,12 @@ const AccountDetail = ({navigation}) => {
   //////////////////////Api Calling/////////////////
   const CreateAcount = async () => {
     var date = new Date();
-    console.log('userid:', date, checked,phone_no,BASE_URL + 'api/dispacher/createDispacher');
-
+    var user= await AsyncStorage.getItem('Userid')
     axios({
-      method: 'POST',
-      url: BASE_URL + 'api/dispacher/createDispacher',
+      method: 'PUT',
+      url: BASE_URL + 'api/dispacher/updateDispacher',
       data: {
+        _id:user,
        img: user_image,
         email: email,
         city: city,
@@ -289,6 +289,7 @@ const AccountDetail = ({navigation}) => {
                   blurOnSubmit={false}
                   placeholderTextColor={Colors.inputtextcolor}
                   style={Inputstyles.input}
+                  keyboardType={'number-pad'}
                 />
               </View>
               <Text style={Inputstyles.inputtoptext}>Country</Text>
@@ -312,6 +313,9 @@ const AccountDetail = ({navigation}) => {
                   onChangeText={setStreet_address}
                   placeholderTextColor={Colors.inputtextcolor}
                   style={Inputstyles.input}
+                  multiline={true}
+                  maxLength={200}
+                  numberOfLines={2.5}
                 />
               </View>
 

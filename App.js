@@ -22,6 +22,7 @@ import PrivacyTerms from './src/screens/StackScreens/Conditions/PrivacyTerms';
 import UpdateProfile from './src/screens/StackScreens/UpdateProfile/UpdateProfile';
 import UpdatePaymentDetail from './src/screens/StackScreens/UpdateProfile/UpdatePayment';
 import AddDriver from './src/screens/StackScreens/Drivers/AddDriver';
+import ViewPaymentDetail from './src/screens/StackScreens/UpdateProfile/ViewPayment';
 
 const Stack = createNativeStackNavigator();
 function App() {
@@ -104,6 +105,10 @@ function App() {
         headerShown: false,
         }} />
        <Stack.Screen name="UpdatePaymentDetail" component={UpdatePaymentDetail}
+        options={{
+        headerShown: false,
+        }} />
+            <Stack.Screen name="ViewPaymentDetail" component={ViewPaymentDetail}
         options={{
         headerShown: false,
         }} />

@@ -6,6 +6,10 @@ import Colors from '../../utills/Colors';
 
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} 
 from 'react-native-responsive-screen';
+
+//////////////////app fonts////////////////
+import { fontFamily } from '../../constant/fonts';
+
 const styles = StyleSheet.create({
     centeredView: {
         zIndex:0,
@@ -16,11 +20,10 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(52, 52, 52, 0.8)',
       },
       modalView: {
-        width: wp(85),
+        width: wp(83),
         paddingTop:wp(5),
         backgroundColor: "white",
-        borderRadius: 20,
-        alignItems: "center",
+        borderRadius:wp(3),
         shadowColor: "#000",
      
         shadowOffset: {
@@ -33,11 +36,9 @@ const styles = StyleSheet.create({
       },
       modaltext:
       { 
-   
-          fontSize:hp(3),
-          fontWeight:'bold',
-          color:Colors.Appthemecolor,
-          fontFamily: "Poppins",
+          fontSize:hp(2),
+          color:'#303030',
+          fontFamily: fontFamily.Poppins_Regular,
           textAlign:'center'
       },
       modalsubtext:
@@ -52,73 +53,42 @@ const styles = StyleSheet.create({
       ApprovedView:
       {
         height: hp(6),
-        width: wp(45),
-         borderRadius:wp(3),
-         backgroundColor:Colors.Appthemecolor,
-        //  /marginRight:10,
-         alignContent:'center',
+        width: wp(33),
+         alignSelf:'flex-end',
          alignItems:'center',
          justifyContent:'center',
-         marginBottom:hp(4)
+         marginBottom:hp(2.5),
+         marginHorizontal:wp(10),
+        flexDirection:'row',
+        justifyContent:'space-between'
       },
-      Pendingtext:
+      leftbtntext:
       {
-          textAlign:'center',
-          margin:10,color:'white',
-          fontSize:15,fontWeight:'bold'
+          textAlign:'left',
+          color:'#6B6B6B',
+          fontSize:hp(2),
+          fontFamily:fontFamily.Poppins_Regular,
+      },
+      rightbtntext:
+      {
+          textAlign:'left',
+          color:Colors.Appthemecolor,
+          fontSize:hp(2),
+          fontFamily:fontFamily.Poppins_SemiBold
       },
 
-   
-      textStyle: {
-        color: "white",
-        fontWeight: "bold",
-        textAlign: "center"
-      },
-      modalText: {
-        marginBottom: 35,
-        textAlign: "center"
-      },
-      buttonview:
-      {
-          flexDirection:'column', justifyContent:"flex-end",
-    marginBottom:30,marginTop:'40%',
-      },
       maintext:{
-        fontSize:20,
-        fontWeight:'bold',
+        fontSize:hp(2),
         color:'black',
-        fontFamily: "Montserrat Bold",
+        fontFamily: fontFamily.Poppins_SemiBold,
+        marginLeft:wp(4)
       },
-
-      logoutbtnView:
-      {
-        width: wp(65),
-         borderRadius:wp(3),
-         flexDirection:'row',
-         justifyContent:'space-between',
-         alignItems:'center',
-         marginBottom:hp(2),
-         //backgroundColor:'red',
-          },
-          cancelbtn:
+          iconstyle:
           {
-            height: hp(5.5),
-            width: wp(28),
-             borderRadius:wp(3),
-             borderColor:Colors.Appthemecolor,
-             borderWidth:1,
-             alignItems:'center',
-             marginBottom:hp(4)
-          },
-          donebtn:
-          {
-            height: hp(5.5),
-            width: wp(28),
-             borderRadius:wp(3),
-             backgroundColor:Colors.Appthemecolor,
-             alignItems:'center',
-             marginBottom:hp(4)
-          },
+              height:hp(15),
+              width:wp(22)
+            },
+        
   });
   export default styles;
   
