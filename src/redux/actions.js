@@ -36,8 +36,7 @@ export const SET_CNIC_FRONT= 'SET_CNIC_FRONT';
 export const SET_CNIC_BACK= 'SET_CNIC_BACK';
 export const SET_VEHICLE_OWNERSHIP= 'SET_VEHICLE_OWNERSHIP';
 
-/////////////////////NavPlace///////////////////
-export const SET_NAV_PLACE= 'SET_NAV_PLACE';
+
 
 
 
@@ -215,10 +214,57 @@ export const setOwnership = ownership => dispatch => {
     });
 };
 
-///////////////Navigation place for camera picker///////////////////////
+/////////////////////NavPlace  STATE AND FUNCTION///////////////////
+export const SET_NAV_PLACE= 'SET_NAV_PLACE';
+
 export const setNavPlace = nav_place => dispatch => {
     dispatch({
         type: SET_NAV_PLACE,
         payload: nav_place,
+    });
+};
+
+  ////////////////Locations STATES and Function/////////////////////
+  export const SET_COUNTRY_ID = 'SET_COUNTRY_ID';
+  export const SET_COUNTRY_NAME = 'SET_COUNTRY_NAME';
+  export const SET_STATE_ID = 'SET_STATE_ID';
+  export const SET_STATE_NAME = 'SET_STATE_NAME';
+  export const SET_CITY_ID = 'SET_CITY_ID';
+  export const SET_CITY_NAME = 'SET_CITY_NAME';
+
+  export const setCountryName = country_name => dispatch => {
+    dispatch({
+        type: SET_COUNTRY_NAME,
+        payload: country_name,
+    });
+};
+export const setCountryId = country_id => dispatch => {
+    dispatch({
+        type: SET_COUNTRY_ID,
+        payload: country_id,
+    });
+};
+export const setStateName = state_name => dispatch => {
+    dispatch({
+        type: SET_STATE_NAME,
+        payload: state_name,
+    });
+};
+export const setStateId = state_id => dispatch => {
+    dispatch({
+        type: SET_STATE_ID,
+        payload: state_id,
+    });
+};
+export const setCityName = city_name => dispatch => {
+    dispatch({
+        type: SET_CITY_NAME,
+        payload: city_name,
+    });
+};
+export const setCityId = city_id => dispatch => {
+    dispatch({
+        type: SET_CITY_ID,
+        payload: city_id,
     });
 };

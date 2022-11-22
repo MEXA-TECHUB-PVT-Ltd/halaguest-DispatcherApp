@@ -48,10 +48,11 @@ import Inputstyles from '../../styles/GlobalStyles/Inputstyles';
 //////////////////ap imags///////////////
 import { appImages } from '../../constant/images';
 
+/////////////////navigation///////////////////
 import { useNavigation } from '@react-navigation/native';
 
 const PaymentDetail = ({props}) => {
-
+/////////////////navigation///////////////////
   const navigation = useNavigation();
 
   /////////////////////////redux///////////////////
