@@ -144,7 +144,7 @@ const Login = ({ navigation }) => {
         <CustomButtonhere
             title={'SIGN IN'}
             widthset={78}
-            topDistance={30}
+            topDistance={32}
             onPress={() => 
              {LoginValidation()}
             }
@@ -161,7 +161,7 @@ const Login = ({ navigation }) => {
           onDismiss={onDismissSnackBar}
           style={{
             backgroundColor: snackbarValue.color,
-            marginBottom:hp(12),
+            marginBottom:hp(15),
             zIndex: 999,
             alignSelf:"center",
             marginLeft:wp(15)
