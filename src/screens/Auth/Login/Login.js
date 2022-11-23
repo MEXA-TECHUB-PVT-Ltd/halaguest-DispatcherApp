@@ -23,7 +23,32 @@ import Colors from '../../../utills/Colors';
 import { appImages } from '../../../constant/images';
 import { widthPercentageToDP as wp ,heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
+
+/////////////////////////////////firebase///////////////////////
+import auth from '@react-native-firebase/auth';
+
 const Login = ({ navigation }) => {
+
+/////////////////////////firebase////////////////
+  // If null, no SMS has been sent
+  const [confirm, setConfirm] = useState(null);
+
+  const [code, setCode] = useState('');
+
+  // Handle the button press
+  async function signInWithPhoneNumber(phoneNumber) {
+    const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
+    setConfirm(confirmation);
+    console.log('code.',confirmation);
+  }
+
+  async function confirmCode() {
+    try {
+      await confirm.confirm(code);
+    } catch (error) {
+      console.log('Invalid code.');
+    }
+  }
 
     ///////////////////checkbox state///////////////////
     const [checked, setChecked] = React.useState(false);
@@ -144,9 +169,12 @@ const Login = ({ navigation }) => {
         <CustomButtonhere
             title={'SIGN IN'}
             widthset={78}
-            topDistance={32}
+            topDistance={30}
             onPress={() => 
-             {LoginValidation()}
+             {
+              //signInWithPhoneNumber('+'+countryCode+number)
+              LoginValidation()
+            }
             }
           />
                      {/* <View style={Authlaststyles.lasttextview}>
