@@ -23,12 +23,12 @@ const styles = StyleSheet.create({
     lefticonview:
     { 
         justifyContent: 'center', 
-        marginLeft: wp(7)
+        marginLeft: wp(5)
      },
     righticonview:
     { 
         justifyContent: 'center', 
-        marginRight: wp(7)
+        paddingRight: wp(35),
      },
     labelView: {
       marginHorizontal: wp(5),

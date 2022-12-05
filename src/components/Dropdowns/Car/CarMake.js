@@ -11,35 +11,27 @@ from 'react-native-responsive-screen';
 
 ////////////////////redux////////////
 import { useSelector, useDispatch } from 'react-redux';
-import { setDispatcher,setDispatcherId } from '../../redux/actions';
+import { setCarMake,setCarMakeId } from '../../../redux/actions';
 
   //////////////////////////app api/////////////////////////
   import axios from 'axios';
-import { BASE_URL } from '../../utills/ApiRootUrl';
-  import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Dispatchers = (props) => {
-    console.log('here:',props)
+const CarMakeDropDown = (props) => {
+
     /////////////redux states///////
-    const { links} = useSelector(state => state.userReducer);
+    const { condition} = useSelector(state => state.userReducer);
     const dispatch = useDispatch();
-
-   //////////////link dropdown////////////////
-   const reflinkddRBSheet = useRef();
 
   //////////dropdownlink data/////////////
   const [dddata, setdddata] = useState()
-  const [ddpickvalue, setddpickvalue] = useState()
 
-  ///////////////link function///////////////
-    const GetDispatchers =async () => {
-        console.log('here:')
+  ///////////////CarCondition function///////////////
+    const GetCarMake =async () => {
         axios({
           method: 'GET',
-          url: BASE_URL+'api/dispacher/allDispachers',
+          url: 'http://teamsuit.co/carDb/api/make/getAll.php',
         })
           .then(function (response) {
-            console.log("response", JSON.stringify(response.data))
             setdddata(response.data)
             console.log('flatlist data:', dddata)
           })
@@ -48,16 +40,18 @@ const Dispatchers = (props) => {
           })
       }
       useEffect(() => {
-        GetDispatchers()
+        GetCarMake()
           }, []);
     return(
         <RBSheet
+        //sstyle={{flex:1}}
         ref={props.refRBSheet}
         closeOnDragDown={true}
         closeOnPressMask={false}
         openDuration={50}
         closeDuration={50}
         animationType="fade"
+        //height={500}
         customStyles={{
           wrapper: {
             backgroundColor: 'rgba(52, 52, 52, 0.5)',
@@ -68,14 +62,15 @@ const Dispatchers = (props) => {
           container: {
             borderTopLeftRadius:wp(10),
             borderTopRightRadius:wp(10),
-              height:hp(35)
+             height:hp(90),
+             maxHeight:hp(90),
           }
         }}>
         <View style={{
           flexDirection: 'row', justifyContent: "space-between",
           marginHorizontal: 0
-        }}>      
-          <Text style={styles.bottomsheettext}>Select Dispatcher</Text>
+        }}>
+          <Text style={styles.bottomsheettext}>Select Car Make</Text>
         </View>
         <FlatList
           data={dddata}
@@ -83,21 +78,24 @@ const Dispatchers = (props) => {
             <TouchableOpacity
             onPress={() =>
               {
-                dispatch(setDispatcher(item.name_of_company)),
-                dispatch(setDispatcherId(item._id)),
-              props.refRBSheet.current.close()
-              }}>
+                dispatch(setCarMake(item.name)),
+                dispatch(setCarMakeId(item.id)),
+                props.refRBSheet.current.close()
+              }}
+             >
             <View style={styles.card}>
                 <Text style={styles.cardtext}>
-                  {item.name_of_company}
+                  {item.name}
                 </Text>
             </View>
             </TouchableOpacity>
           )}
-          keyExtractor={item => item._id}  
+          keyExtractor={item => item.id}
+        
         />
+
         </RBSheet>
     )
 };
 
-export default Dispatchers;
+export default CarMakeDropDown;

@@ -27,6 +27,11 @@ import { widthPercentageToDP as wp ,heightPercentageToDP as hp} from 'react-nati
 /////////////////////////////////firebase///////////////////////
 import auth from '@react-native-firebase/auth';
 
+////////////////api////////////////
+import axios from 'axios';
+import { BASE_URL } from '../../../utills/ApiRootUrl';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const Login = ({ navigation }) => {
 
 /////////////////////////firebase////////////////
@@ -75,13 +80,30 @@ const Login = ({ navigation }) => {
       setVisible('true');
     } 
     else {
+     // SendSms()
       navigation.navigate('Verification',{Phonenumber:countryCode+number})
     }
   };
+  //////////////////////Api Calling Login/////////////////
+  const SendSms = async () => {
 
-  useEffect(() => {
+axios({
+  method: 'POST',
+  url: BASE_URL + 'api/sms/createSMS',
+  data: {
+    phoneno: "+"+countryCode+number,
+    msgContent:'You are added in hotel kindly download app to continue'
+  },
+})
+  .then(async function (response) {
+    console.log('response in driver login', JSON.stringify(response.data));
+    //navigation.navigate('Verification',{Phonenumber:countryCode+number,code:})
 
-  }, []);
+  })
+  .catch(function (error) {
+    console.log('error', error);
+  });
+};
 
   return (
 

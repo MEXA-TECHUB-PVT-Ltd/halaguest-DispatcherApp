@@ -41,12 +41,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 /////////////////////////////////firebase///////////////////////
 import auth from '@react-native-firebase/auth';
+
+
 import { checkPermission } from '../../../api/FCMToken';
 
 const Verification = ({ navigation,route }) => {
   console.log("obj:",route.params)
 
     /////////////previous data state///////////////
+
+
+
     const [predata] = useState(route.params);
 
        /////////////redux states///////
@@ -112,28 +117,26 @@ axios({
   method: 'POST',
   url: BASE_URL + 'api/phoneNo/logins',
   data: {
-    table_name: 'guest',
+    table_name: 'dispacher',
     phoneno: predata.Phonenumber,
     device_token: FCMToken
   },
 })
   .then(async function (response) {
-    console.log('response in driver login', JSON.stringify(response.data.data.hotel_id.length));
-    if(response.data.message === "Guest Exists" && response.data.data.hotel_id.length>0)// && response.data.data.hotel_id.length===0
+    console.log('response in driver login', JSON.stringify(response.data));
+    if(response.data.message === "Dispacher Exists"  )// && response.data.data.hotel_id.length>0
     {
       dispatch(setPhoneNumber(response.data.data.phoneno))
       dispatch(setLoginUser(response.data.data._id))
       await AsyncStorage.setItem('Userid',response.data.data._id);
       setModalVisible(true)
     }
-    
     else {
       dispatch(setPhoneNumber(response.data.data.phoneno))
       dispatch(setLoginUser(response.data.data._id))
      await AsyncStorage.setItem('Userid',response.data.data._id);
      navigation.navigate('CreateAccount',{navplace:'CreateAccount'})
     }
-
   })
   .catch(function (error) {
     console.log('error', error);
@@ -145,8 +148,7 @@ const [code, setCode] = React.useState('');
 const [confirmcode, setconfirmCode] = React.useState('');
 
   // Set an initializing state whilst Firebase connects
-  con
-  st [initializing, setInitializing] = React.useState(true);
+  const [initializing, setInitializing] = React.useState(true);
   const [user, setUser] = React.useState();
 
   // Handle user state changes
@@ -190,7 +192,7 @@ const confirmCode=async()=> {
   }
 }
   useEffect(() => {
-    signInWithPhoneNumber('+'+predata.Phonenumber)
+    //signInWithPhoneNumber('+'+predata.Phonenumber)
              checkPermission().then(result => {
             console.log("here in google password",result);
             setFCMToken(result)
@@ -293,8 +295,8 @@ disabled={disabletimer}
             topDistance={0}
             //onPress={() => verifyno()}
             onPress={()=> 
-              confirmCode()
-                //CheckLogin() 
+             // confirmCode()
+                CheckLogin() 
                // navigation.navigate('CreateAccount',{navplace:'CreateAccount'})
                 }
           /></View>

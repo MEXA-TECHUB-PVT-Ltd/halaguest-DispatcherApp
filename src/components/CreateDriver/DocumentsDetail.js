@@ -12,13 +12,13 @@ import {
 ////////////////////app pakaage////////////////////
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+/////////////////app icons////////////
+import AntDesign from 'react-native-vector-icons/AntDesign';
+
 //////////////////////app components///////////////
 import CamerBottomSheet from '../CameraBottomSheet/CameraBottomSheet';
 import CustomButtonhere from '../Button/CustomButton';
 import CustomModal from '../Modal/CustomModal';
-
-/////////////////app icons////////////
-import AntDesign from 'react-native-vector-icons/AntDesign';
 
 ////////////////////redux////////////
 import {useSelector, useDispatch} from 'react-redux';
@@ -40,8 +40,17 @@ import styles from './styles';
 import Colors from '../../utills/Colors';
 import Inputstyles from '../../styles/GlobalStyles/Inputstyles';
 
-const DocumentsDetail = ({navigation}) => {
+/////////////////app images////////////////
+import { appImages } from '../../constant/images';
 
+/////////////////navigation///////////////////
+import { useNavigation } from '@react-navigation/native';
+
+
+const DocumentsDetail = ({}) => {
+
+/////////////////navigation///////////////////
+const navigation = useNavigation();
 
   /////////////////////////redux///////////////////
   const { license_front,license_back,cnic_front,cnic_back,ownership,
@@ -84,7 +93,8 @@ const DocumentsDetail = ({navigation}) => {
       .then(function (response) {
         console.log('response', JSON.stringify(response.data));
         dispatch(setDocumentsSubmitId(response.data.data._id))
-        setModalVisible(true)
+        updateDriverDetail((response.data.data._id))
+
       })
       .catch(function (error) {
         console.log('error', error);
@@ -111,20 +121,20 @@ console.log('here in delete',props)
     };
 
       //////////////////////Api Calling/////////////////
-  const updateDispatcherDetail = async () => {
-console.log('here ids',vehicle_submit_id,payment_submit_id,document_submit_id)
+  const updateDriverDetail = async (props) => {
+console.log('here ids',props)
     axios({
       method: 'PUT',
-      url: BASE_URL + 'dispacher/updateDispacher',
+      url: BASE_URL + 'api/driver/updateDriver',
       data: {
         _id: driver_submit_id,
-        payment_detail_id:payment_submit_id
+        doc_id: props,
       },
     })
       .then(function (response) {
         console.log('response', JSON.stringify(response.data));
- 
-        setModalVisible(false)
+        setModalVisible(true)
+        navigation.navigate('DriverList')
       })
       .catch(function (error) {
         console.log('error', error);
@@ -197,7 +207,7 @@ console.log('here ids',vehicle_submit_id,payment_submit_id,document_submit_id)
       )}
           <View style={{flex: 1}}>
             <View style={Inputstyles.inputview}>
-              <Text style={Inputstyles.inputtoptext}>Driving License</Text>
+              <Text style={Inputstyles.inputtoptext}>Driving license_back</Text>
               {license_front!=''?
                     <View style={styles.docimageview}>
           <Image
@@ -420,14 +430,11 @@ console.log('here ids',vehicle_submit_id,payment_submit_id,document_submit_id)
           <CustomModal 
                 modalVisible={modalVisible}
                 CloseModal={() => setModalVisible(false)}
-                Icon={  <AntDesign
-                  name="checkcircle"
-                  color={Colors.Appthemecolor}
-                  size={100}
-              />}
-              text={'Password Updated'}
-          buttontext={'Go to Login'}
- onPress={()=> {updateDispatcherDetail()}}
+                Icon={appImages.CheckCircle}
+                text={'Account Verified Successfully'}
+                leftbuttontext={'CANCEL'}
+                rightbuttontext={'OK'}
+ onPress={()=> {updateDriverDetail()}}
                 /> 
   
         <CamerBottomSheet

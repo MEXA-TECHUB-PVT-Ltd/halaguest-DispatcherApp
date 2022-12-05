@@ -4,10 +4,11 @@ import {
     ScrollView,
     Image, View, Text, TouchableOpacity, TextInput,ActivityIndicator
 } from 'react-native';
-
+ 
+///////////////////react native navigation///////////////
+import { useIsFocused } from '@react-navigation/native';
 
 //////////////////app icons////////////////
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 //////////////////////app components///////////////
@@ -32,35 +33,11 @@ import Inputstyles from '../../../styles/GlobalStyles/Inputstyles';
 /////////////////app images///////////
 import { appImages } from '../../../constant/images';
 
-const Guestss = [
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-      title: 'First Item',
-
-    },
-    {
-      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-      title: 'Second Item',
-    },
-    {
-      id: '58694a0f-3da1-471f-bd96-145571e29d72',
-      title: 'Third Item',
-    },
-    {
-        id: '58694a0f-3da1-471f-bd9556-145571e29d72',
-        title: 'Third Item',
-      },
-      {
-        id: '5869r4a0f-3da1-471f-bd96-145571e29d72',
-        title: 'Third Item',
-      },
-      {
-          id: '58694a0f-3da1-471f-bd9rr556-145571e29d72',
-          title: 'Third Item',
-        },
-  ];
 
 const DriverList = ({ navigation,route }) => {
+
+    ////////////isfocused//////////
+    const isfocussed = useIsFocused()
 
     //Modal States
     const [modalVisible, setModalVisible] = useState(false);
@@ -71,27 +48,29 @@ const DriverList = ({ navigation,route }) => {
   const dispatch = useDispatch();
 
 
-    ///////////// Get Guests states and API function/////////////
-    const [Drivers, setDrivers] = useState('')
+   /////////////main menu status states/////////////
+   const [Drivers, setDrivers] = useState('');
 
-    const GetDrivers = async () => {
-        axios({
-            method: 'GET',
-            url: BASE_URL + 'api/guest/allGuests',
-        })
-            .then(async function (response) {
-                console.log("list data here ", response.data)
-                setDrivers(response.data)
-            })
-            .catch(function (error) {
-                console.log("error", error)
-            })
-        } 
-
-    useEffect(() => {
-       // GetDrivers()
-      
-    }, []);
+   const GetDrivers = async () => {
+     var user = await AsyncStorage.getItem('Userid');
+     axios({
+       method: 'GET',
+       url: BASE_URL + 'api/driver/getDispacherDriver/' + user,
+     })
+       .then(async function (response) {
+         //console.log("list data here ", response.data)
+         setDrivers(response.data);
+       })
+       .catch(function (error) {
+         console.log('error', error);
+       });
+   };
+ 
+   useEffect(() => {
+    if (isfocussed) {
+     GetDrivers();
+    }
+   }, [isfocussed]);
 
     return (
 <SafeAreaView style={styles.container}>
@@ -136,18 +115,16 @@ const DriverList = ({ navigation,route }) => {
                   />
                           <Ionicons name="search" color={Colors.drawertext} size={25} />
                 </View>
-            { Guestss === ''?null:
-Guestss.map((item, key) => (
+            { Drivers === ''?null:
+Drivers.map((item, key) => (
     <TouchableOpacity onPress={()=> 
     navigation.navigate('DriverDetail',{guest_id:item._id,navplace:'DriverDetail'})}>
     <GuestCards
-                                        // guestlogo={item.img}
-                                        // guestname={item.name}
-                                        // guestemail={item.email}
-                                        // guestgender={item.gender}
-                                        guestname={'Guest name here'}
-                                        guestemail={'Email here'}
-                                        guestgender={'Gender Here'}
+                                        guestlogo={BASE_URL+ item.img}
+                                        guestname={item.name}
+                                        guestemail={item.email}
+                                        guestgender={item.gender}
+                              
                                     />
                                     </TouchableOpacity>
 ))

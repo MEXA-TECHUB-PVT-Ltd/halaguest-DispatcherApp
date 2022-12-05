@@ -1,26 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {
-    SafeAreaView, FlatList, StatusBar, ImageBackground,BackHandler,
+    SafeAreaView,StatusBar, TouchableOpacity,
     ScrollView,
-    Image, View, Text, TouchableOpacity, TextInput,ActivityIndicator
+    Image, View, 
 } from 'react-native';
-
-////////////////////app pakages//////////////
-import { Checkbox } from 'react-native-paper';
-
-//////////////////app icons////////////////
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import Icon from 'react-native-vector-icons/Ionicons';
 
 //////////////////////app components///////////////
 import CustomHeader from '../../../components/Header/CustomHeader';
-import CustomTopTabs from '../../../components/TopTabs/CustomTopTabs';
-import IconsTopTabs from '../../../components/TopTabs/IconsTabs/IconsTopTabs';
-import DashboardHeader from '../../../components/Header/DashboardHeade';
-import ViewAll from '../../../components/ViewAll/ViewAll';
 import GuestCards from '../../../components/CustomCards/GuestCards/GuestCards';
-import OrdersCards from '../../../components/CustomCards/OrderCards/Orders';
-import CustomCards from '../../../components/CustomCards/CustomCards';
+import Loader from '../../../components/Loader/Loader';
 
 ////////////////////redux////////////
 import {useSelector, useDispatch} from 'react-redux';
@@ -35,93 +23,74 @@ import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-nat
 /////////////////////app styles////////////
 import styles from './styles';
 import Colors from '../../../utills/Colors';
-import TopTabstyles from '../../../styles/GlobalStyles/TopTabstyles';
-import Inputstyles from '../../../styles/GlobalStyles/Inputstyles';
 
 /////////////////app images///////////
 import { appImages } from '../../../constant/images';
 
-
-  const ScheduleOrders1 = [
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-      title: 'First Item',
-    },
-    {
-      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-      title: 'Second Item',
-    },
-    {
-      id: '58694a0f-3da1-471f-bd96-145571e29d72',
-      title: 'Third Item',
-    },
-    {
-        id: '58694a0f-3da1-471f-bd9556-145571e29d72',
-        title: 'Third Item',
-      },
-  ];
-
 const Orders = ({ navigation }) => {
 
-    //Modal States
-    const [modalVisible, setModalVisible] = useState(false);
+   ////////////////loading/////////////
+const [loading, setloading] = useState(true);
 
     ///////////////////redux states///////////////////////
     const {hoteltype, phone_no,top_tab_driver,top_tab_payment,top_tab_vehicle } =
     useSelector(state => state.userReducer);
   const dispatch = useDispatch();
 
-            /////////////main menu status states/////////////
-    const [ScheduleOrders, setScheduleOrders] = useState('')
-        const GetScheduleOrders = async () => {
+   /////////////main menu status states/////////////
+   const [Drivers, setDrivers] = useState('')
 
-            axios({
-                method: 'GET',
-                url: BASE_URL + 'api/Order/hotelOrdersScheduled/63636a39fdb2d73b27d198f8',
-            })
-                .then(async function (response) {
-                    console.log("list data here ", response.data)
-                    setScheduleOrders(response.data)
-                })
-                .catch(function (error) {
-                    console.log("error", error)
-                })
-            }
-            
+   const GetDrivers = async () => {
+       var user= await AsyncStorage.getItem('Userid')
+       axios({
+           method: 'GET',
+           url: BASE_URL + 'api/driver/getDispacherDriver/'+user,
+       })
+           .then(async function (response) {
+               //console.log("list data here ", response.data)
+               setDrivers(response.data)
+               setloading(false)
+           })
+           .catch(function (error) {
+               console.log("error", error)
+           })
+       }    
 
     useEffect(() => {
-        GetScheduleOrders()
+      GetDrivers()
     }, []);
 
     return (
 <SafeAreaView style={styles.container}>
+<Loader
+    isLoading={loading}
+    />
     <ScrollView 
      showsVerticalScrollIndicator={false}
      showsHorizontalScrollIndicator={false}>
             <StatusBar backgroundColor={'black'} barStyle="light-content" />
             <CustomHeader
-          headerlabel={'Orders'}
+          headerlabel={'Diver Trips'}
 
         />
 <View style={{marginTop:hp(3)}}>
-{
-ScheduleOrders1 === ''?null:
+{ Drivers === ''?null:
+Drivers.slice(0, 3).map((item, key) => (
+  
+  <TouchableOpacity 
+  activeOpacity={true}
+  onPress={()=>navigation.navigate('DriverOrders',{driverid:item._id,navplace:'DriverList'})}>
 
-ScheduleOrders1.slice(0, 3).map((item, key) => (
-    <TouchableOpacity onPress={()=>navigation.navigate('OrderDetail',{orderid:item._id,navplace:'Schedule'})}>
-<OrdersCards
-                                      
-                                    //   time={item.flight_time}
-                                    //    price={item.total_amount+'$'}
-                                    //    pickupLoc={item.pickup_location}
-                                    //    dropoffLoc={item.dropoff_location}
-                                       time={'00:00 pm'}
-                                       price={'200'+'$'}
-                                       pickupLoc={'Pickup location here'}
-                                       dropoffLoc={'Drop off location here'}
-                                   />
-                                   </TouchableOpacity>
+    <GuestCards
+                                        guestlogo={BASE_URL+item.img}
+                                        guestname={item.name}
+                                        guestemail={item.email}
+                                        guestgender={item.gender}
+                               
+                                    />
+                                    </TouchableOpacity>
 ))
+
 }
 </View>
 

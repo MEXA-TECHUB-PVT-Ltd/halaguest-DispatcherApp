@@ -16,10 +16,6 @@ import { Snackbar } from 'react-native-paper';
 
 //////////////////////app components///////////////
 import CustomButtonhere from '..//Button/CustomButton';
-import CustomModal from '../Modal/CustomModal';
-
-/////////////////app icons////////////
-import AntDesign from 'react-native-vector-icons/AntDesign';
 
 ////////////////////redux////////////
 import {useSelector, useDispatch} from 'react-redux';
@@ -45,18 +41,11 @@ import styles from './styles';
 import Colors from '../../utills/Colors';
 import Inputstyles from '../../styles/GlobalStyles/Inputstyles';
 
-//////////////////ap imags///////////////
-import { appImages } from '../../constant/images';
 
-/////////////////navigation///////////////////
-import { useNavigation } from '@react-navigation/native';
-
-const PaymentDetail = ({props}) => {
-/////////////////navigation///////////////////
-  const navigation = useNavigation();
+const PaymentDetail = ({navigation}) => {
 
   /////////////////////////redux///////////////////
-  const {hoteltype, phone_no,payment_submit_id,driver_submit_id  } =
+  const {hoteltype, phone_no,  } =
     useSelector(state => state.userReducer);
   const dispatch = useDispatch();
 
@@ -90,7 +79,7 @@ const PaymentDetail = ({props}) => {
 
 
   //////////////////////Api Calling/////////////////
-  const DispatcherPayment = async () => {
+  const DriverPayment = async () => {
 
     axios({
       method: 'POST',
@@ -106,12 +95,12 @@ const PaymentDetail = ({props}) => {
       .then(function (response) {
         console.log('response', JSON.stringify(response.data));
         dispatch(setPaymentSubmitId(response.data.data._id))
-        updateDispatcherDetail(response.data.data._id)
-
-        // dispatch(setTopTabDriver(false))
-        // dispatch(setTopTabVehicle(false))
-        //  dispatch(setTopTabPayment(false))
-        //  dispatch(setTopTabDocument(true))
+          setloading(0);
+          setdisable(0);
+        dispatch(setTopTabDriver(false))
+        dispatch(setTopTabVehicle(false))
+         dispatch(setTopTabPayment(false))
+         dispatch(setTopTabDocument(true))
 
       })
       .catch(function (error) {
@@ -134,24 +123,15 @@ const PaymentDetail = ({props}) => {
       setsnackbarValue({value: 'Please Enter Account Number', color: 'red'});
       setVisible('true');
     } 
-    // else if (account_number.length != 16) {
-    //   setsnackbarValue({value: "Please Enter 16 digit Valid Card", color: 'red'});
-    //   setVisible('true');
-    // }
-
     // else if (Expiry=='') {
     //   setsnackbarValue({value: "Please Enter month / Year", color: 'red'});
     //   setVisible('true');
     //   }
-  // else if (CVV=='') {
-  //   setsnackbarValue({value: "Please Enter CVV", color: 'red'});
-  //   setVisible('true');
+  else if (CVV=='') {
+    setsnackbarValue({value: "Please Enter CVV", color: 'red'});
+    setVisible('true');
 
-  //   }
-  //   else if (CVV.length != 3) {
-  //     setsnackbarValue({value: "Please Enter 3 digit Valid CVV", color: 'red'});
-  //     setVisible('true');
-  //   }
+    }
     else if (iban=='') {
       setsnackbarValue({value: "Please Enter IBAN", color: 'red'});
       setVisible('true');
@@ -165,33 +145,10 @@ const PaymentDetail = ({props}) => {
     else {
           setloading(1);
          setdisable(1);
-         DispatcherPayment()
+      DriverPayment()
   
     }
   };
-
-        //////////////////////Api Calling/////////////////
-        const updateDispatcherDetail = async (props) => {
-          console.log('here ids payment',driver_submit_id,"payment",props)
-              axios({
-                method: 'PUT',
-                url: BASE_URL + 'api/dispacher/updateDispacher',
-                data: {
-                  _id: driver_submit_id,
-                  payment_detail_id:props
-                },
-              })
-                .then(function (response) {
-                  console.log('upadated response', JSON.stringify(response.data));
-                  setloading(0);
-                  setdisable(0);
-                 setModalVisible(true)
-              
-                })
-                .catch(function (error) {
-                  console.log('error', error);
-                });
-            };
     ////////////////datetime picker states////////////////
     const [date, setDate] = useState(new Date());
     const [mode, setMode] = useState('date');
@@ -321,7 +278,7 @@ const PaymentDetail = ({props}) => {
                 />
               </View>
               </TouchableOpacity>
-              {/* <Text style={Inputstyles.inputtoptext}>CVV</Text>
+              <Text style={Inputstyles.inputtoptext}>CVV</Text>
               <View style={Inputstyles.action}>
                 <TextInput
                   ref={ref_input5}
@@ -336,7 +293,7 @@ const PaymentDetail = ({props}) => {
                   style={Inputstyles.input}
                   keyboardType='number-pad'
                 />
-              </View> */}
+              </View>
               <Text style={Inputstyles.inputtoptext}>IBAN</Text>
               <View style={Inputstyles.action}>
                 <TextInput
@@ -389,17 +346,6 @@ const PaymentDetail = ({props}) => {
           }}>
           {snackbarValue.value}
         </Snackbar>
-        <CustomModal 
-                modalVisible={modalVisible}
-                CloseModal={() => setModalVisible(false)}
-                Icon={appImages.CheckCircle}
-                text={'Account Created Successfully'}
-                leftbuttontext={'CANCEL'}
-                rightbuttontext={'OK'}
- onPress={()=> {    setModalVisible(false),
-  navigation.navigate('BottomTab')}}
-                /> 
-
       </SafeAreaView>
     </ScrollView>
   );

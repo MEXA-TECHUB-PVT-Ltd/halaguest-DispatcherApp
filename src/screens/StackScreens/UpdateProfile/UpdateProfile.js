@@ -183,7 +183,6 @@ const [maxheight, setHeight] = useState(52)
             </TouchableOpacity>
 <View style={Inputstyles.inputview}>
   <Text style={Inputstyles.inputtoptext}>Comapany Name</Text>
-  <TouchableOpacity onPress={()=> refddRBSheet.current.open()} >
   <View style={Inputstyles.action}>
             <TextInput
             value={name}
@@ -196,10 +195,8 @@ const [maxheight, setHeight] = useState(52)
               placeholderTextColor={Colors.inputtextcolor}
               autoCapitalize="none"
               style={Inputstyles.input}
-              editable={false}
             />
           </View>
-  </TouchableOpacity>
           <Text style={Inputstyles.inputtoptext}>Email</Text>
           <View style={Inputstyles.action}>
             <TextInput

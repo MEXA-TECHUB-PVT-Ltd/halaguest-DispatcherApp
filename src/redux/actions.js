@@ -7,26 +7,36 @@ export const SET_HOTEL_TYPE = 'SET_HOTEL_TYPE';
 export const SET_DISPATCHER = 'SET_DISPATCHER';
 export const SET_DISPATCHER_ID = 'SET_DISPATCHER_ID';
 
-////////////////////Account Data Submition////////////////
+////////////////////Account Data Submition FOR DRIVER////////////////
 export const SET_DRIVER_SUBMIT_ID = 'SET_DRIVER_SUBMIT_ID';
 export const SET_VEHICLE_SUBMIT_ID = 'SET_VEHICLE_SUBMIT_ID';
 export const SET_PAYMENT_SUBMIT_ID = 'SET_PAYMENT_SUBMIT_ID';
 export const SET_DOCUMENT_SUBMIT_ID = 'SET_DOCUMENT_SUBMIT_ID';
 
+////////////////////Account Data Submition FOR DISPATCHER////////////////
+export const SET_DISPATCHER_SUBMIT_ID = 'SET_DISPATCHER_SUBMIT_ID';
+export const SET_DISPATCHER_PAYMENT_SUBMIT_ID = 'SET_DISPATCHER_PAYMENT_SUBMIT_ID';
 
-///////////////////APP TOP TAB STATES/////////////////////
+///////////////////APP TOP TAB STATES  For DISPATCHER/////////////////////
+export const SET_TOP_TAB_DISPATCHER = 'SET_TOP_TAB_DISPATCHER';
+export const SET_TOP_TAB_DISPATCHER_PAYMENT = 'SET_TOP_TAB_DISPATCHER_PAYMENT';
+
+///////////////////APP TOP TAB STATES  For DRIVER/////////////////////
 export const SET_TOP_TAB_DRIVER = 'SET_TOP_TAB_DRIVER';
 export const SET_TOP_TAB_VEHICLE = 'SET_TOP_TAB_VEHICLE';
 export const SET_TOP_TAB_PAYMENT = 'SET_TOP_TAB_PAYMENT';
 export const SET_TOP_TAB_DOCUMENT = 'SET_TOP_TAB_DOCUMENT';
 
   ////////////VEHICLE////////////
-export const SET_CAR_CONDITION = 'SET_CAR_CONDITION';
-export const SET_CAR_CONDITION_ID = 'SET_CAR_CONDITION_ID';
-export const SET_CAR_TYPE = 'SET_CAR_TYPE';
-export const SET_CAR_TYPE_ID = 'SET_CAR_TYPE_ID';
-export const SET_CAR_MAKE = 'SET_CAR_MAKE';
-export const SET_CAR_YEAR = 'SET_CAR_YEAR';
+  export const SET_CAR_CONDITION = 'SET_CAR_CONDITION';
+  export const SET_CAR_CONDITION_ID = 'SET_CAR_CONDITION_ID';
+  export const SET_CAR_TYPE = 'SET_CAR_TYPE';
+  export const SET_CAR_TYPE_ID = 'SET_CAR_TYPE_ID';
+  export const SET_CAR_MAKE = 'SET_CAR_MAKE';
+  export const SET_CAR_MAKE_ID = 'SET_CAR_MAKE_ID';
+  export const SET_CAR_MODAL = 'SET_CAR_MODAL';
+  export const SET_CAR_MODAL_ID = 'SET_CAR_MODAL_ID';
+  export const SET_CAR_YEAR = 'SET_CAR_YEAR';
 
 //////////////////IMAGES/////////////////
 export const SET_USER_IMAGE= 'SET_USER_IMAGE';
@@ -37,10 +47,22 @@ export const SET_CNIC_BACK= 'SET_CNIC_BACK';
 export const SET_VEHICLE_OWNERSHIP= 'SET_VEHICLE_OWNERSHIP';
 
 
+  ////////////////APP TOP TAB STATES FOR DISPATCHER/////////////////////
+  export const setTopTabdispatcher = top_tab_dispatcher => dispatch => {
+    dispatch({
+        type: SET_TOP_TAB_DISPATCHER,
+        payload: top_tab_dispatcher,
+    });
+};
 
+export const setTopTabDispatcherPayment = top_tab_dispatcher_payment => dispatch => {
+    dispatch({
+        type: SET_TOP_TAB_DISPATCHER_PAYMENT,
+        payload: top_tab_dispatcher_payment,
+    });
+};
 
-
-  ////////////////APP TOP TAB STATES/////////////////////
+  ////////////////APP TOP TAB STATES FOR DRIVER/////////////////////
   export const setTopTabDriver = top_tab_driver => dispatch => {
     dispatch({
         type: SET_TOP_TAB_DRIVER,
@@ -68,8 +90,6 @@ export const setTopTabDocument = top_tab_document => dispatch => {
         payload: top_tab_document,
     });
 };
-  ////////////////APP STATES/////////////////////
-
 
   ///////////////User Login Info///////////////
   export const setLoginUser = login_user_id => dispatch => {
@@ -107,7 +127,21 @@ export const setDispatcherId = dispatcher_id => dispatch => {
     });
 };
 
-////////////////////Account Data Submition////////////////
+////////////////////Account Data Submition FOR DISPATCHER////////////////
+export const setDispatcherSubmitId = dispatcher_submit_id => dispatch => {
+    dispatch({
+        type: SET_DISPATCHER_SUBMIT_ID,
+        payload: dispatcher_submit_id,
+    });
+};
+export const setDispatcherPaymentSubmitId = dispatcher_payment_submit_id => dispatch => {
+    dispatch({
+        type: SET_DISPATCHER_PAYMENT_SUBMIT_ID,
+        payload: dispatcher_payment_submit_id,
+    });
+};
+
+////////////////////Account Data Submition FOR DRIVER////////////////
 export const setDriverSubmitId = driver_submit_id => dispatch => {
     dispatch({
         type: SET_DRIVER_SUBMIT_ID,
@@ -165,6 +199,24 @@ export const setCarMake = car_make => dispatch => {
     dispatch({
         type: SET_CAR_MAKE,
         payload: car_make,
+    });
+};
+export const setCarMakeId = car_make_id => dispatch => {
+    dispatch({
+        type: SET_CAR_MAKE_ID,
+        payload: car_make_id,
+    });
+};
+export const setCarModal = car_modal => dispatch => {
+    dispatch({
+        type: SET_CAR_MODAL,
+        payload: car_modal,
+    });
+};
+export const setCarModalId = car_modal_id => dispatch => {
+    dispatch({
+        type: SET_CAR_MODAL_ID,
+        payload: car_modal_id,
     });
 };
 export const setCarYear = car_year => dispatch => {
@@ -266,5 +318,30 @@ export const setCityId = city_id => dispatch => {
     dispatch({
         type: SET_CITY_ID,
         payload: city_id,
+    });
+};
+
+     ////////////////APP LOGIN STATES/////////////////////
+     export const SET_LOCATION_LAT = 'SET_LOCATION_LAT';
+     export const SET_LOCATION_LNG = 'SET_LOCATION_LNG';
+     export const SET_LOCATION_ADDRESS = 'SET_LOCATION_ADDRESS';
+
+  ///////////////User Login Info///////////////
+  export const setLocationLat = location_lat => dispatch => {
+    dispatch({
+        type: SET_LOCATION_LAT,
+        payload: location_lat,
+    });
+};
+export const setLocationLng = location_lng => dispatch => {
+    dispatch({
+        type: SET_LOCATION_LNG,
+        payload: location_lng,
+    });
+};
+export const setLocationAddress = location_address => dispatch => {
+    dispatch({
+        type: SET_LOCATION_ADDRESS,
+        payload:location_address,
     });
 };

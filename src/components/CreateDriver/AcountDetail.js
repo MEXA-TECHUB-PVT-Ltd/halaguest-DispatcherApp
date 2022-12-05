@@ -9,8 +9,14 @@ import {
   TextInput,
 } from 'react-native';
 
+////////////////////app pakages//////////////////
+import CountryPicker from "react-native-country-picker-modal"
+
+/////////////////navigation//////////////
+import { useIsFocused,useNavigation } from '@react-navigation/native';
+
 ////////////paper papkage///////////////
-import {Snackbar} from 'react-native-paper';
+import {RadioButton,Snackbar} from 'react-native-paper';
 
 //////////////////////app components///////////////
 import CamerBottomSheet from '../CameraBottomSheet/CameraBottomSheet';
@@ -22,11 +28,11 @@ import CountryDropDown from '../Dropdowns/Location/Country';
 import StateDropDown from '../Dropdowns/Location/State';
 import CityDropDown from '../Dropdowns/Location/City';
 
-
 ////////////////////redux////////////
 import {useSelector, useDispatch} from 'react-redux';
-import { setNavPlace,setTopTabDispatcher,setTopTabDispatcherPayment,setDispatcherSubmitId } from '../../redux/actions';
-
+import { setNavPlace,setTopTabDriver,setTopTabVehicle,setDriverSubmitId,
+setCountryName,setStateName,setCityName
+} from '../../redux/actions';
 ////////////////api////////////////
 import axios from 'axios';
 import { BASE_URL } from '../../utills/ApiRootUrl';
@@ -42,20 +48,30 @@ import {
 import styles from './styles';
 import Colors from '../../utills/Colors';
 import Inputstyles from '../../styles/GlobalStyles/Inputstyles';
+import CountryPickerstyles from '../../styles/CountryPicker/CountryPickerstyles';
 
 /////////////////app images///////////
 import { appImages } from '../../constant/images';
 
-////////////////device token////////////////////////
+// Import Map and Marker
+import Geocoder from 'react-native-geocoding';
+import { MapKeyApi } from '../../utills/MapKey';
+
+////////////currrent location function/////////////
+import { locationPermission,getCurrentLocation } from '../../api/CurrentLocation';
 import { checkPermission } from '../../api/FCMToken';
 
-const AccountDetail = ({navigation}) => {
+const AccountDetail = () => {
+
+  /////////////////navigation///////////////////
+const navigation = useNavigation();
+
+      ////////////isfocused//////////
+      const isfocussed = useIsFocused()
 
   /////////////////////////redux///////////////////
-
-  const {hoteltype, phone_no,user_image ,top_tab_dispatcher_payment,dispatcher,dispatcher_id,
-    country_name,state_name,city_name,
-  } =
+  const {login_user_id, phone_no,user_image ,country_name,state_name,city_name,dispatcher,dispatcher_id,
+    location_address,location_lng, location_lat} =
     useSelector(state => state.userReducer);
   const dispatch = useDispatch();
 
@@ -70,8 +86,6 @@ const AccountDetail = ({navigation}) => {
   
   //camera and imagepicker
   const refRBSheet = useRef();
-  //Modal States
-  const [modalVisible, setModalVisible] = useState(false);
 
   /////////TextInput References///////////
   const ref_input2 = useRef();
@@ -88,18 +102,96 @@ const AccountDetail = ({navigation}) => {
  const [snackbarValue, setsnackbarValue] = useState({value: '', color: ''});
  const onDismissSnackBar = () => setVisible(false);
 
+       /////////////country picker states////////////
+       const [CountryPickerView, setCountryPickerView] = useState(false);
+       const [countryCode, setCountryCode] = useState('92');
+       const [number, setnumber] = useState();
+
   ///////////////API data states////////////////////
-  //////////////////Account////////////////
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [gender, setGender] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
+  const [phoneNo, setPhoneNo] = useState('');
   const [zipcode, setZipcode] = useState('');
-  const [country, setCountry] =useState('');
   const [street_address, setStreet_address] = useState('');
   const[FCMToken,setFCMToken]=useState()
 
+  //////////////////////Api Calling/////////////////
+  const CreateAcount = async () => {
+    var user= await AsyncStorage.getItem('Userid')
+    var date = new Date();
+    console.log('userid:', date, checked,phone_no,user,city_name);
+
+    axios({
+      method: 'POST',
+      url: BASE_URL + 'api/driver/createDriver',
+      data: {
+      //  _id:login_user_id,
+        img: user_image,
+        email: email,
+        gender:checked,
+        country: country_name,
+        city: city_name===''?state_name:city_name,
+        state: state_name,
+        zip_code: zipcode,
+        street_address: street_address,
+        name: name,
+        phoneNo: phoneNo,
+        created_at: date,
+        dispacher_id: user,
+        status: 'block',
+        //device_token: FCMToken,
+        driver_location:location_address,
+        driver_lat: location_lat,
+        driver_log: location_lng, 
+      },
+    })
+      .then(function (response) {
+        console.log('response', JSON.stringify(response.data));
+        dispatch(setDriverSubmitId(response.data.data._id))
+            setloading(0);
+          setdisable(0);
+        dispatch(setTopTabDriver(false))
+        dispatch(setTopTabVehicle(true))
+
+      })
+      .catch(function (error) {
+        console.log('error', error);
+      });
+  };
+
+///////////////////map states//////////
+const [driver_lat, setDriver_lat] = useState();
+const [driver_log, setDriver_log] = useState();
+const [driver_location, setDriver_location] = useState();
+
+const getLiveLocation = async () => {
+Geocoder.init(MapKeyApi); 
+const locPermissionDenied = await locationPermission()
+if (locPermissionDenied) {
+    const { latitude, longitude, heading } = await getCurrentLocation()
+    console.log("get live location after 4 second",latitude,longitude,heading)
+    setDriver_lat(latitude)
+    setDriver_log(longitude)
+    Geocoder.from(latitude,
+      longitude)
+       .then(json => {
+var addressComponent = json.results[0].formatted_address;
+console.log('address here:',addressComponent);
+setDriver_location(addressComponent)
+       })
+}
+}
+useEffect(() => {
+  if (isfocussed) {
+    getLiveLocation()
+    checkPermission().then(result => {
+      console.log("here in google password",result);
+      setFCMToken(result)
+      //do something with the result
+    })
+}
+
+  },[isfocussed]);
  ///////////email//////////////////
  const handleValidEmail = (val) => {
   let reg = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w\w+)+$/;
@@ -113,57 +205,11 @@ const AccountDetail = ({navigation}) => {
   }
 }
 
-  //////////////////////Api Calling/////////////////
-  const CreateAcount = async () => {
-    var date = new Date();
-    var user= await AsyncStorage.getItem('Userid')
-    axios({
-      method: 'PUT',
-      url: BASE_URL + 'api/dispacher/updateDispacher',
-      data: {
-        _id:user,
-       img: user_image,
-        email: email,
-        country: country_name,
-        city: city_name===''?state_name:city_name,
-        state: state_name,
-        zip_code: zipcode,
-        street_address: street_address,
-        name_of_company: name,
-        phoneNo: phone_no,
-        created_at: date,
-        status: 'block',
-        device_token: FCMToken,
-      },
-    })
-      .then(function (response) {
-        console.log('response', JSON.stringify(response.data));
-        dispatch(setDispatcherSubmitId(response.data.data._id))
-            setloading(0);
-          setdisable(0);
-        dispatch(setTopTabDispatcher(false))
-        dispatch(setTopTabDispatcherPayment(true))
-
-      })
-      .catch(function (error) {
-        console.log('error', error);
-      });
-  };
-
-  useEffect(() => {
-    //signInWithPhoneNumber('+'+predata.Phonenumber)
-             checkPermission().then(result => {
-            console.log("here in google password",result);
-            setFCMToken(result)
-            //do something with the result
-          })
-  },[]);
-
   //////////////////////// API forms validations////////////////////////
   const AcountValidation = async () => {
     // input validation
     if (name == '') {
-      setsnackbarValue({value: 'Please Enter Comapany name', color: 'red'});
+      setsnackbarValue({value: 'Please Enter Username', color: 'red'});
       setVisible('true');
     } else if (email == '') {
       setsnackbarValue({value: 'Please Enter Email', color: 'red'});
@@ -181,11 +227,13 @@ const AccountDetail = ({navigation}) => {
       setsnackbarValue({value: 'Please Enter City', color: 'red'});
       setVisible('true');
     } 
+
     else if (zipcode == '') {
       setsnackbarValue({value: 'Please Enter Zipcode', color: 'red'});
       setVisible('true');
     }
-    else if (street_address == '') {
+ 
+    else if (location_address == '') {
       setsnackbarValue({value: 'Please Enter Street Address', color: 'red'});
       setVisible('true');
     }
@@ -200,6 +248,25 @@ const AccountDetail = ({navigation}) => {
     <ScrollView
       showsHorizontalScrollIndicator={false}
       showsVerticalScrollIndicator={false}>
+              {CountryPickerView == true ? <CountryPicker
+          withFilter={true}
+          withCallingCode={true}
+          withModal={true}
+          withFlag={true}
+          withFlagButton={true}
+
+          onSelect={(e) => {
+            setCountryPickerView(false)
+            //setCountryFlag(JSON.parse(e.flag))
+            setCountryCode(JSON.parse(e.callingCode))
+          }}
+          onClose={(e) => {
+            setCountryPickerView(false)
+          }}
+          visible={CountryPickerView}
+        /> :
+          <View></View>
+        }
       <SafeAreaView style={styles.container}>
           <View style={{flex: 1}}>
             <TouchableOpacity onPress={() =>
@@ -236,7 +303,7 @@ const AccountDetail = ({navigation}) => {
               </View>
             </TouchableOpacity>
             <View style={Inputstyles.inputview}>
-              <Text style={Inputstyles.inputtoptext}>Company Name{top_tab_dispatcher_payment}</Text>
+              <Text style={Inputstyles.inputtoptext}>Name</Text>
                 <View style={Inputstyles.action}>
                   <TextInput
                     onChangeText={setName}
@@ -256,13 +323,46 @@ const AccountDetail = ({navigation}) => {
                 <TextInput
                   ref={ref_input2}
                   onChangeText={setEmail}
+                  returnKeyType={'next'}
+                  onSubmitEditing={() => {
+                    ref_input3.current.focus();
+                  }}
+                  blurOnSubmit={false}
                   placeholderTextColor={Colors.inputtextcolor}
                   autoCapitalize="none"
                   keyboardType='email-address'
                   style={Inputstyles.input}
                 />
               </View>
-
+              <Text style={Inputstyles.inputtoptext}>Phone Number</Text>
+              <View style={[Inputstyles.action,{alignItems:'center'}]}>
+          <TouchableOpacity
+            onPress={() => {
+              setCountryPickerView(true)
+            }}>
+            <View style={CountryPickerstyles.countrypicker}>
+                <TextInput
+                  underlineColor={'white'}
+                  activeUnderlineColor={'white'}
+                  //style={styles.input}
+                  editable={false}
+                  value={'+'+countryCode}
+                  style={CountryPickerstyles.codetext}
+                  placeholderTextColor={"#6B6B6B"}
+                />
+                         <View style={CountryPickerstyles.verticallineview}></View>
+            </View>
+   
+          </TouchableOpacity>
+     <TextInput
+         ref={ref_input3}
+       onChangeText={setnumber}
+       autoCapitalize="none"
+       keyboardType='number-pad'
+       placeholderTextColor={Colors.inputtextcolor}
+       style={[Inputstyles.input,{width:wp(62)}]}
+     />
+   </View>
               <Text style={Inputstyles.inputtoptext}>Country</Text>
           <TouchableOpacity
                 onPress={() => refCountryddRBSheet.current.open()}>
@@ -304,30 +404,55 @@ const AccountDetail = ({navigation}) => {
                 <TextInput
                   ref={ref_input5}
                   onChangeText={setZipcode}
-                  returnKeyType={'next'}
-                  onSubmitEditing={() => {
-                    ref_input6.current.focus();
-                  }}
-                  blurOnSubmit={false}
                   placeholderTextColor={Colors.inputtextcolor}
                   style={Inputstyles.input}
                   keyboardType={'number-pad'}
                 />
               </View>
-
+      
               <Text style={Inputstyles.inputtoptext}>Street Address</Text>
+              <TouchableOpacity onPress={()=>navigation.navigate('Location',{navplace:'CreateDriver'})}>
               <View style={Inputstyles.action}>
                 <TextInput
-                  ref={ref_input6}
-                  onChangeText={setStreet_address}
+             value={location_address}
+                  //onChangeText={setStreet_address}
                   placeholderTextColor={Colors.inputtextcolor}
                   style={Inputstyles.input}
                   multiline={true}
                   maxLength={200}
                   numberOfLines={2.5}
+                 editable={false}
                 />
               </View>
-
+              </TouchableOpacity>
+              <Text style={Inputstyles.inputtoptext}>Gender</Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  paddingHorizontal: wp(12),
+                }}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <RadioButton
+                    value="male"
+                    status={checked === 'male' ? 'checked' : 'unchecked'}
+                    color={Colors.Appthemecolor}
+                    uncheckedColor={Colors.Appthemecolor}
+                    onPress={() => setChecked('male')}
+                  />
+                  <Text style={Inputstyles.inputtoptext}>Male</Text>
+                </View>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <RadioButton
+                    value="female"
+                    status={checked === 'female' ? 'checked' : 'unchecked'}
+                    color={Colors.Appthemecolor}
+                    uncheckedColor={Colors.Appthemecolor}
+                    onPress={() => setChecked('female')}
+                  />
+                  <Text style={Inputstyles.inputtoptext}>Female</Text>
+                </View>
+              </View>
             </View>
 
             <View style={{marginBottom: hp(2), marginTop: hp(12)}}>
@@ -338,8 +463,9 @@ const AccountDetail = ({navigation}) => {
                 loading={loading}
                 disabled={disable}
                 onPress={
-                  () => AcountValidation()
-                  // navigation.navigate('Drawerroute')
+                  () => 
+                  AcountValidation()
+                  //navigation.navigate('Drawerroute')
                 }
               />
             </View>
@@ -364,9 +490,8 @@ const AccountDetail = ({navigation}) => {
         <Dispatchers
           refRBSheet={refddRBSheet}
           onClose={() => refddRBSheet.current.close()}
-          title={'From Gallery'}
         />
-                        <CountryDropDown
+                <CountryDropDown
           refRBSheet={refCountryddRBSheet}
           onClose={() => refCountryddRBSheet.current.close()}
         />
