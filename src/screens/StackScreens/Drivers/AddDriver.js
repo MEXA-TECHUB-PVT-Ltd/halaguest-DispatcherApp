@@ -11,11 +11,12 @@ import {
 
 //////////////////////app components///////////////
 import CustomHeader from '../../../components/Header/CustomHeader';
+import CustomButtonhere from '../../../components/Button/CustomButton';
 import CustomTopTabs from '../../../components/TopTabs/CustomTopTabs';
-import AccountDetail from '../../../components/CreateAcount/AcountDetail';
-import VehicleDetail from '../../../components/CreateAcount/VehicleDetail';
+import AccountDetail from '../../../components/CreateDriver/AcountDetail';
+import VehicleDetail from '../../../components/CreateDriver/VehicleDetail';
 import PaymentDetail from '../../../components/CreateAcount/PaymentDetail';
-import DocumentsDetail from '../../../components/CreateAcount/DocumentsDetail';
+import DocumentsDetail from '../../../components/CreateDriver/DocumentsDetail';
 
 ////////////////////redux////////////
 import {useSelector, useDispatch} from 'react-redux';
@@ -73,7 +74,7 @@ const AddDriver = ({navigation, route}) => {
       <SafeAreaView style={styles.container}>
         <StatusBar backgroundColor={'black'} barStyle="light-content" />
         <CustomHeader
-          headerlabel={'Create Account'}
+          headerlabel={'Add Driver'}
           iconPress={() => {
             navigation.goBack();
           }}
@@ -87,7 +88,7 @@ const AddDriver = ({navigation, route}) => {
             onPress={() => {
               dispatch(setTopTabDriver(top_tab_driver))
               dispatch(setTopTabVehicle(!top_tab_vehicle))
-              dispatch(setTopTabPayment(!top_tab_payment))
+              //dispatch(setTopTabPayment(!top_tab_payment))
               dispatch(setTopTabDocument(!top_tab_document))
 
               // setDriver(true),
@@ -101,7 +102,7 @@ const AddDriver = ({navigation, route}) => {
             onPress={() => {
               dispatch(setTopTabDriver(!top_tab_driver))
               dispatch(setTopTabVehicle(top_tab_vehicle))
-              dispatch(setTopTabPayment(!top_tab_payment))
+              //dispatch(setTopTabPayment(!top_tab_payment))
               dispatch(setTopTabDocument(!top_tab_document))
               // setDriver(false),
               //   setVehicle(true),
@@ -110,7 +111,7 @@ const AddDriver = ({navigation, route}) => {
             }}>
             <CustomTopTabs title={'Vehicle'} width={'20%'} state={!top_tab_vehicle} />
           </TouchableOpacity>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => {
               //dispatch(setTopTabPayment(!top_tab_payment))
               setDriver(false),
@@ -124,13 +125,13 @@ const AddDriver = ({navigation, route}) => {
               //color={() => setLongterm(true)}
               state={!top_tab_payment}
             />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity
             onPress={() => {
               //dispatch(setTopTabDocument(!top_tab_document))
               setDriver(false),
                 setVehicle(false),
-                setPayment(false),
+                //setPayment(false),
                 setDocuments(true);
             }}>
             <CustomTopTabs
@@ -145,12 +146,16 @@ const AddDriver = ({navigation, route}) => {
  <AccountDetail/>
         ) : top_tab_vehicle ? (
 <VehicleDetail/>
-        ) : top_tab_payment ? (
-    <PaymentDetail/>
-        ) : top_tab_document ? (
+        ) 
+    //     : top_tab_payment ? (
+    // <PaymentDetail/>
+    //     )
+         : top_tab_document ? (
    <DocumentsDetail/>
         )
         : null}
+
+
       </SafeAreaView>
     </ScrollView>
   );

@@ -33,9 +33,7 @@ const CountryDropDown = (props) => {
           url: 'http://teamsuit.co/GlobalCountry/api/countries/getAll.php',
         })
           .then(function (response) {
-            console.log("response", JSON.stringify(response.data))
             setdddata(response.data)
-            console.log('flatlist data:', dddata)
           })
           .catch(function (error) {
             console.log("error", error)
@@ -46,14 +44,12 @@ const CountryDropDown = (props) => {
           }, []);
     return(
         <RBSheet
-        //sstyle={{flex:1}}
         ref={props.refRBSheet}
         closeOnDragDown={true}
         closeOnPressMask={false}
         openDuration={50}
         closeDuration={50}
         animationType="fade"
-        //height={500}
         customStyles={{
           wrapper: {
             backgroundColor: 'rgba(52, 52, 52, 0.5)',

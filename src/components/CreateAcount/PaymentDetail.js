@@ -23,8 +23,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 
 ////////////////////redux////////////
 import {useSelector, useDispatch} from 'react-redux';
-import { setNavPlace ,setTopTabPayment,setTopTabDriver,
-  setTopTabVehicle,setTopTabDocument,
+import { setNavPlace ,
 setPaymentSubmitId
 } from '../../redux/actions';
 
@@ -56,7 +55,7 @@ const PaymentDetail = ({props}) => {
   const navigation = useNavigation();
 
   /////////////////////////redux///////////////////
-  const {hoteltype, phone_no,payment_submit_id,driver_submit_id  } =
+  const {payment_submit_id,dispatcher_submit_id  } =
     useSelector(state => state.userReducer);
   const dispatch = useDispatch();
 
@@ -106,9 +105,8 @@ const PaymentDetail = ({props}) => {
       .then(function (response) {
         console.log('response', JSON.stringify(response.data));
         dispatch(setPaymentSubmitId(response.data.data._id))
-          setloading(0);
-          setdisable(0);
-          setModalVisible(true)
+        updateDispatcherDetail(response.data.data._id)
+
         // dispatch(setTopTabDriver(false))
         // dispatch(setTopTabVehicle(false))
         //  dispatch(setTopTabPayment(false))
@@ -172,20 +170,21 @@ const PaymentDetail = ({props}) => {
   };
 
         //////////////////////Api Calling/////////////////
-        const updateDispatcherDetail = async () => {
-          console.log('here ids',payment_submit_id,driver_submit_id)
+        const updateDispatcherDetail = async (props) => {
               axios({
                 method: 'PUT',
                 url: BASE_URL + 'api/dispacher/updateDispacher',
                 data: {
-                  _id: driver_submit_id,
-                  payment_detail_id:payment_submit_id
+                  _id: dispatcher_submit_id,
+                  payment_detail_id:props
                 },
               })
                 .then(function (response) {
                   console.log('upadated response', JSON.stringify(response.data));
-                  setModalVisible(false),
-                  navigation.navigate('BottomTab')
+                  setloading(0);
+                  setdisable(0);
+                 setModalVisible(true)
+              
                 })
                 .catch(function (error) {
                   console.log('error', error);
@@ -395,7 +394,8 @@ const PaymentDetail = ({props}) => {
                 text={'Account Created Successfully'}
                 leftbuttontext={'CANCEL'}
                 rightbuttontext={'OK'}
- onPress={()=> {updateDispatcherDetail()}}
+ onPress={()=> {    setModalVisible(false),
+  navigation.navigate('BottomTab')}}
                 /> 
 
       </SafeAreaView>

@@ -43,6 +43,7 @@ const CustomHeader = ({ navigation, headerlabel,iconPress,icon,
           <Icon name={searchicon} size={25} 
           color= {'white'}
           onPress={onpresseacrh} 
+          
            />
    
         </View>

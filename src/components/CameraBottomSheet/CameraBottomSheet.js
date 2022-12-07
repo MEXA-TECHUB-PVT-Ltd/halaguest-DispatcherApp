@@ -77,6 +77,7 @@ const CamerBottomSheet = (props) => {
   const Uploadpic = props => {
     console.log('here url', BASE_URL + 'upload-image');
     RNFetchBlob.fetch(
+      
       'POST',
       BASE_URL + 'upload-image',
       {
@@ -93,6 +94,7 @@ const CamerBottomSheet = (props) => {
           data: RNFetchBlob.wrap(props.uri),
         },
       ],
+      
     )
       .then(resp => {
         console.log('here Profile image:', resp.data);

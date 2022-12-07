@@ -15,11 +15,17 @@ import {Snackbar} from 'react-native-paper';
 //////////////////////app components///////////////
 import CamerBottomSheet from '../CameraBottomSheet/CameraBottomSheet';
 import CustomButtonhere from '../Button/CustomButton';
+
+////////////////Custom DropDowns///////////
 import Dispatchers from '../Dropdowns/Dispatchers';
+import CountryDropDown from '../Dropdowns/Location/Country';
+import StateDropDown from '../Dropdowns/Location/State';
+import CityDropDown from '../Dropdowns/Location/City';
+
 
 ////////////////////redux////////////
 import {useSelector, useDispatch} from 'react-redux';
-import { setNavPlace,setTopTabDriver,setTopTabVehicle,setDriverSubmitId } from '../../redux/actions';
+import { setNavPlace,setTopTabDispatcher,setTopTabDispatcherPayment,setDispatcherSubmitId } from '../../redux/actions';
 
 ////////////////api////////////////
 import axios from 'axios';
@@ -40,11 +46,15 @@ import Inputstyles from '../../styles/GlobalStyles/Inputstyles';
 /////////////////app images///////////
 import { appImages } from '../../constant/images';
 
+////////////////device token////////////////////////
+import { checkPermission } from '../../api/FCMToken';
+
 const AccountDetail = ({navigation}) => {
 
   /////////////////////////redux///////////////////
 
-  const {hoteltype, phone_no,user_image ,top_tab_driver,top_tab_vehicle,dispatcher,dispatcher_id
+  const {hoteltype, phone_no,user_image ,top_tab_dispatcher_payment,dispatcher,dispatcher_id,
+    country_name,state_name,city_name,dispatcher_submit_id
   } =
     useSelector(state => state.userReducer);
   const dispatch = useDispatch();
@@ -54,11 +64,12 @@ const AccountDetail = ({navigation}) => {
 
   //////////////link dropdown////////////////
   const refddRBSheet = useRef();
+  const refCountryddRBSheet=useRef();
+  const refStateddRBSheet=useRef();
+  const refCityddRBSheet=useRef();
   
   //camera and imagepicker
   const refRBSheet = useRef();
-  //Modal States
-  const [modalVisible, setModalVisible] = useState(false);
 
   /////////TextInput References///////////
   const ref_input2 = useRef();
@@ -79,22 +90,17 @@ const AccountDetail = ({navigation}) => {
   //////////////////Account////////////////
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [gender, setGender] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
   const [zipcode, setZipcode] = useState('');
-  const [country, setCountry] =useState('');
   const [street_address, setStreet_address] = useState('');
+  const[FCMToken,setFCMToken]=useState()
 
  ///////////email//////////////////
  const handleValidEmail = (val) => {
   let reg = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w\w+)+$/;
   if (reg.test(val)) {
-      console.log('true')
       return true;
   }
   else {
-      console.log('falsse')
       return false;
   }
 }
@@ -110,25 +116,25 @@ const AccountDetail = ({navigation}) => {
         _id:user,
        img: user_image,
         email: email,
-        city: city,
-        state: state,
+        country: country_name,
+        city: city_name===''?state_name:city_name,
+        state: state_name,
         zip_code: zipcode,
-        country: country,
         street_address: street_address,
         name_of_company: name,
         phoneNo: phone_no,
         created_at: date,
         status: 'block',
-        device_token: '354ref',
+        device_token: FCMToken,
       },
     })
       .then(function (response) {
-        console.log('response', JSON.stringify(response.data));
-        dispatch(setDriverSubmitId(response.data.data._id))
-            setloading(0);
-          setdisable(0);
-        dispatch(setTopTabDriver(false))
-        dispatch(setTopTabVehicle(true))
+        //console.log('response', JSON.stringify(response.data));
+        dispatch(setDispatcherSubmitId(response.data.data._id))
+        dispatch(setTopTabDispatcher(false))
+        dispatch(setTopTabDispatcherPayment(true))
+        setloading(0);
+        setdisable(0);
 
       })
       .catch(function (error) {
@@ -136,7 +142,14 @@ const AccountDetail = ({navigation}) => {
       });
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    //signInWithPhoneNumber('+'+predata.Phonenumber)
+             checkPermission().then(result => {
+            console.log("here in google password",result);
+            setFCMToken(result)
+            //do something with the result
+          })
+  },[]);
 
   //////////////////////// API forms validations////////////////////////
   const AcountValidation = async () => {
@@ -150,20 +163,18 @@ const AccountDetail = ({navigation}) => {
     } else if (!handleValidEmail(email)) {
       setsnackbarValue({value: 'Incorrect Email', color: 'red'});
       setVisible('true');
-    } else if (city == '') {
+    }   else if (country_name == '') {
+      setsnackbarValue({value: 'Please Enter Country', color: 'red'});
+      setVisible('true');
+    }    else if (state_name == '') {
+      setsnackbarValue({value: 'Please Enter State', color: 'red'});
+      setVisible('true');
+    } else if (city_name == '') {
       setsnackbarValue({value: 'Please Enter City', color: 'red'});
       setVisible('true');
     } 
-    else if (state == '') {
-      setsnackbarValue({value: 'Please Enter State', color: 'red'});
-      setVisible('true');
-    }
     else if (zipcode == '') {
       setsnackbarValue({value: 'Please Enter Zipcode', color: 'red'});
-      setVisible('true');
-    }
-    else if (country == '') {
-      setsnackbarValue({value: 'Please Enter Country', color: 'red'});
       setVisible('true');
     }
     else if (street_address == '') {
@@ -237,11 +248,6 @@ const AccountDetail = ({navigation}) => {
                 <TextInput
                   ref={ref_input2}
                   onChangeText={setEmail}
-                  returnKeyType={'next'}
-                  onSubmitEditing={() => {
-                    ref_input3.current.focus();
-                  }}
-                  blurOnSubmit={false}
                   placeholderTextColor={Colors.inputtextcolor}
                   autoCapitalize="none"
                   keyboardType='email-address'
@@ -249,34 +255,42 @@ const AccountDetail = ({navigation}) => {
                 />
               </View>
 
-              <Text style={Inputstyles.inputtoptext}>City</Text>
-              <View style={Inputstyles.action}>
-                <TextInput
-                  ref={ref_input3}
-                  onChangeText={setCity}
-                  returnKeyType={'next'}
-                  onSubmitEditing={() => {
-                    ref_input4.current.focus();
-                  }}
-                  blurOnSubmit={false}
-                  placeholderTextColor={Colors.inputtextcolor}
-                  style={Inputstyles.input}
-                />
-              </View>
-              <Text style={Inputstyles.inputtoptext}>State</Text>
-              <View style={Inputstyles.action}>
-                <TextInput
-                  ref={ref_input4}
-                  onChangeText={setState}
-                  returnKeyType={'next'}
-                  onSubmitEditing={() => {
-                    ref_input5.current.focus();
-                  }}
-                  blurOnSubmit={false}
-                  placeholderTextColor={Colors.inputtextcolor}
-                  style={Inputstyles.input}
-                />
-              </View>
+              <Text style={Inputstyles.inputtoptext}>Country</Text>
+          <TouchableOpacity
+                onPress={() => refCountryddRBSheet.current.open()}>
+          <View style={Inputstyles.action}>
+            <TextInput
+                  value={country_name}
+              placeholderTextColor={Colors.inputtextcolor}
+              style={Inputstyles.input}
+              editable={false}
+            />
+          </View>
+          </TouchableOpacity>
+          <Text style={Inputstyles.inputtoptext}>State</Text>
+          <TouchableOpacity
+                onPress={() => refStateddRBSheet.current.open()}>
+          <View style={Inputstyles.action}>
+            <TextInput
+                 value={state_name}
+              placeholderTextColor={Colors.inputtextcolor}
+              style={Inputstyles.input}
+              editable={false}
+            />
+          </View>
+          </TouchableOpacity>
+          <Text style={Inputstyles.inputtoptext}>City</Text>
+          <TouchableOpacity
+                onPress={() => refCityddRBSheet.current.open()}>
+          <View style={Inputstyles.action}>
+            <TextInput
+                  value={city_name}
+              placeholderTextColor={Colors.inputtextcolor}
+              style={Inputstyles.input}
+              editable={false}
+            />
+          </View>
+        </TouchableOpacity>
               <Text style={Inputstyles.inputtoptext}>Zip_Code</Text>
               <View style={Inputstyles.action}>
                 <TextInput
@@ -292,24 +306,11 @@ const AccountDetail = ({navigation}) => {
                   keyboardType={'number-pad'}
                 />
               </View>
-              <Text style={Inputstyles.inputtoptext}>Country</Text>
-              <View style={Inputstyles.action}>
-                <TextInput
-                  ref={ref_input6}
-                  onChangeText={setCountry}
-                  returnKeyType={'next'}
-                  onSubmitEditing={() => {
-                    ref_input7.current.focus();
-                  }}
-                  blurOnSubmit={false}
-                  placeholderTextColor={Colors.inputtextcolor}
-                  style={Inputstyles.input}
-                />
-              </View>
+
               <Text style={Inputstyles.inputtoptext}>Street Address</Text>
               <View style={Inputstyles.action}>
                 <TextInput
-                  ref={ref_input7}
+                  ref={ref_input6}
                   onChangeText={setStreet_address}
                   placeholderTextColor={Colors.inputtextcolor}
                   style={Inputstyles.input}
@@ -356,6 +357,18 @@ const AccountDetail = ({navigation}) => {
           refRBSheet={refddRBSheet}
           onClose={() => refddRBSheet.current.close()}
           title={'From Gallery'}
+        />
+                        <CountryDropDown
+          refRBSheet={refCountryddRBSheet}
+          onClose={() => refCountryddRBSheet.current.close()}
+        />
+                         <StateDropDown
+          refRBSheet={refStateddRBSheet}
+          onClose={() => refStateddRBSheet.current.close()}
+        />
+                         <CityDropDown
+          refRBSheet={refCityddRBSheet}
+          onClose={() => refCityddRBSheet.current.close()}
         />
       </SafeAreaView>
     </ScrollView>

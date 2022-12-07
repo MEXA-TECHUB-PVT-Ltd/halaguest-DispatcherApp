@@ -11,22 +11,13 @@ import {
 
 //////////////////////app components///////////////
 import CustomHeader from '../../../components/Header/CustomHeader';
-import CustomButtonhere from '../../../components/Button/CustomButton';
 import CustomTopTabs from '../../../components/TopTabs/CustomTopTabs';
 import AccountDetail from '../../../components/CreateAcount/AcountDetail';
-import VehicleDetail from '../../../components/CreateAcount/VehicleDetail';
 import PaymentDetail from '../../../components/CreateAcount/PaymentDetail';
-import DocumentsDetail from '../../../components/CreateAcount/DocumentsDetail';
 
 ////////////////////redux////////////
 import {useSelector, useDispatch} from 'react-redux';
 import { setNavPlace,setTopTabDocument,setTopTabDriver,setTopTabPayment,setTopTabVehicle } from '../../../redux/actions';
-
-////////////////api////////////////
-import axios from 'axios';
-import {BASE_URL} from '../../../utills/ApiRootUrl';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import RNFetchBlob from 'rn-fetch-blob';
 
 /////////////////////height width pakage/////////////////////
 import {
@@ -37,7 +28,6 @@ import {
 /////////////////////app styles////////////
 import styles from './styles';
 import Colors from '../../../utills/Colors';
-import Inputstyles from '../../../styles/GlobalStyles/Inputstyles';
 import TopTabstyles from '../../../styles/GlobalStyles/TopTabstyles';
 
 /////////////////app images///////////
@@ -51,7 +41,7 @@ const CreateAccount = ({navigation, route}) => {
 
   /////////////////////////redux///////////////////
 
-  const {hoteltype, phone_no,top_tab_driver,top_tab_document,top_tab_payment,top_tab_vehicle } =
+  const {top_tab_dispatcher,top_tab_dispatcher_payment} =
     useSelector(state => state.userReducer);
   const dispatch = useDispatch();
 
@@ -84,12 +74,14 @@ const CreateAccount = ({navigation, route}) => {
           onpresseacrh={() => onSearch()}
         />
         <View style={[TopTabstyles.TopTabView,{paddingHorizontal:wp(12)}]}>
-            <CustomTopTabs title={'Transport Detail'} width={'30%'} state={!top_tab_driver} />
-            <CustomTopTabs title={'Payment Details'} width={'30%'} state={!top_tab_vehicle} />
+            <CustomTopTabs title={'Transport Detail'} width={'30%'} state={!top_tab_dispatcher} />
+            <CustomTopTabs title={'Payment Details'} width={'30%'} 
+            //state={!top_tab_dispatcher_payment} 
+            />
         </View>
-        {top_tab_driver  ? (
+        {top_tab_dispatcher  ? (
  <AccountDetail/>
-        ) : top_tab_payment ? (
+        ) : top_tab_dispatcher_payment ? (
     <PaymentDetail
     nav={navigation}
     />

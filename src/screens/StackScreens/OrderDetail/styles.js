@@ -37,15 +37,14 @@ userdetail:
 {
 flexDirection:'row',
 justifyContent:'space-between',
-alignItems:'center',
-marginBottom:hp(4)
+alignItems:'center'
 },
 usernametext:
 {
 fontFamily:fontFamily.Poppins_SemiBold,
 fontSize:hp(1.8),
 color:'#303030',
-marginLeft:wp(2),
+marginLeft:wp(2)
 },
 status:
 {
@@ -79,8 +78,7 @@ lineview:
 flexDirection:'row',
 marginTop:hp(1),
 borderBottomColor:'#DCDCDC',
-borderBottomWidth:0.8,
-marginBottom:hp(2)
+borderBottomWidth:0.8
 },
 detailtextleft:
 {
@@ -131,25 +129,19 @@ subtext:
 fontSize:hp(1.5),
 },
 
-////////////////////map styles///////////////
-mapcontainer: {
+btntext:
+{
+  color: 'white',
+  fontSize: hp(1.8),
+  fontFamily:fontFamily.Poppins_Regular,
+
+},
+mapStyle: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-
   },
-   map: {
-     position: 'absolute',
-     top: 0,
-     left: 0,
-     right: 0,
-     bottom: 0,
-   },
-
-
   });
   export default styles;

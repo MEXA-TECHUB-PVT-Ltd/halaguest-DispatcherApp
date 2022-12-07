@@ -9,17 +9,8 @@ import {
   TextInput,
 } from 'react-native';
 
-////////////paper papkage///////////////
-import {RadioButton,Snackbar,Menu } from 'react-native-paper';
-
-//////////////////app icons////////////////
-import Icon from 'react-native-vector-icons/Ionicons';
-
 //////////////////////app components///////////////
-import CamerBottomSheet from '../../../components/CameraBottomSheet/CameraBottomSheet';
-import CustomButtonhere from '../../../components/Button/CustomButton';
 import CustomHeader from '../../../components/Header/CustomHeader';
-
 
 ////////////////////redux////////////
 import {useSelector, useDispatch} from 'react-redux';
@@ -196,7 +187,7 @@ else{
          {hide=== true?
          <View style={styles.docimagesview}>
          <Image
-            source={require('../../../assets/dataimages/card.png')}
+            source={appImages.userimage}
             style={styles.docimages}
             resizeMode='contain'
           />

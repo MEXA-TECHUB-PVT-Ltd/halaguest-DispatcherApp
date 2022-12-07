@@ -1,15 +1,14 @@
-
 import * as React from 'react';
-import { View, Text } from 'react-native';
-import { NavigationContainer,useNavigation  } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {View, Text} from 'react-native';
+import {NavigationContainer, useNavigation} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 // //////////////notification/////////////////
 // import messaging from '@react-native-firebase/messaging';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { Provider } from 'react-redux';
-import { Store } from './src/redux/store';
+import {Provider} from 'react-redux';
+import {Store} from './src/redux/store';
 
 //Screens
 import AuthNav from './src/navigation/AuthNav/AuthNav';
@@ -23,13 +22,14 @@ import UpdateProfile from './src/screens/StackScreens/UpdateProfile/UpdateProfil
 import UpdatePaymentDetail from './src/screens/StackScreens/UpdateProfile/UpdatePayment';
 import AddDriver from './src/screens/StackScreens/Drivers/AddDriver';
 import ViewPaymentDetail from './src/screens/StackScreens/UpdateProfile/ViewPayment';
+import DriverOrders from './src/screens/StackScreens/Drivers/DriverOrder';
+import Location from './src/screens/StackScreens/Location/Location';
 
 const Stack = createNativeStackNavigator();
 function App() {
-//const navigation = useNavigation();
+  //const navigation = useNavigation();
   const [loading, setLoading] = React.useState(true);
   const [initialRoute, setInitialRoute] = React.useState('Home');
-
 
   // React.useEffect( () => {
   //   // Assume a message-notification contains a "type" property in the data payload of the screen to open
@@ -70,54 +70,101 @@ function App() {
   // }, []);
   return (
     <Provider store={Store}>
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName={initialRoute}>
-      <Stack.Screen name="AuthNav" component={AuthNav}
-        options={{
-        headerShown: false,
-        }} />
-  <Stack.Screen name="BottomTab" component={BottomTab}
-        options={{
-        headerShown: false,
-        }} />
-  <Stack.Screen name="OrderDetail" component={OrderDetail}
-        options={{
-        headerShown: false,
-        }} />
-          <Stack.Screen name="DriverList" component={DriverList}
-        options={{
-        headerShown: false,
-        }} />
-        <Stack.Screen name="DriverDetail" component={DriverDetail}
-        options={{
-        headerShown: false,
-        }} />
-     <Stack.Screen name="Settings" component={Settings}
-        options={{
-        headerShown: false,
-        }} />
-         <Stack.Screen name="PrivacyTerms" component={PrivacyTerms}
-        options={{
-        headerShown: false,
-        }} />
-         <Stack.Screen name="UpdateProfile" component={UpdateProfile}
-        options={{
-        headerShown: false,
-        }} />
-       <Stack.Screen name="UpdatePaymentDetail" component={UpdatePaymentDetail}
-        options={{
-        headerShown: false,
-        }} />
-            <Stack.Screen name="ViewPaymentDetail" component={ViewPaymentDetail}
-        options={{
-        headerShown: false,
-        }} />
-         <Stack.Screen name="AddDriver" component={AddDriver}
-        options={{
-        headerShown: false,
-        }} />
-      </Stack.Navigator>
-    </NavigationContainer>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName={initialRoute}>
+          <Stack.Screen
+            name="AuthNav"
+            component={AuthNav}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="BottomTab"
+            component={BottomTab}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="OrderDetail"
+            component={OrderDetail}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="DriverList"
+            component={DriverList}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="DriverDetail"
+            component={DriverDetail}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="Settings"
+            component={Settings}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="PrivacyTerms"
+            component={PrivacyTerms}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="UpdateProfile"
+            component={UpdateProfile}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="UpdatePaymentDetail"
+            component={UpdatePaymentDetail}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="ViewPaymentDetail"
+            component={ViewPaymentDetail}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="AddDriver"
+            component={AddDriver}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="DriverOrders"
+            component={DriverOrders}
+            options={{
+              headerShown: false,
+            }}
+          />
+                   <Stack.Screen
+            name="Location"
+            component={Location}
+            options={{
+              headerShown: false,
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
     </Provider>
   );
 }

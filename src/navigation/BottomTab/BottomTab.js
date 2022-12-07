@@ -95,6 +95,7 @@ function BottomTab() {
             {/* <Ionicons name="cart" color={!focused ? 'grey' :'white'} size={25} /> */}
             <IconButton
                 icon={appImages.Trips}
+                color={!focused ? 'grey':'white'}
                 iconColor={ !focused ? 'grey':'white'}
                 style={{backgroundColor: focused ? null:'white',color:"red"}}
                 size={30}
@@ -106,33 +107,28 @@ function BottomTab() {
                         resizeMode='contain'
                       /> */}
             </View>
-            <Text style={style.tabtextcolor}>{!focused ?null:'Orders'}</Text>
+            <Text style={style.tabtextcolor}>{!focused ?null:'Trips'}</Text>
             </View>
           ),
         }} />
-                <Tab.Screen name="Transaction" component={Transaction}
+                {/* <Tab.Screen name="Transaction" component={Transaction}
         options={{
           headerShown: false,
 
           tabBarIcon: ({ color, focused }) => (
             <View style={style.maintabview}>
             <View style={[style.tab, focused ? style.selectedTab : null]}>
-            {/* <Ionicons name="person" color={!focused ? 'grey' :'white'} size={25} /> */}
             <IconButton
                 icon={appImages.Transaction}
                 iconColor={ !focused ? 'grey':'white'}
                 style={{backgroundColor: focused ? null:'white',color:"red"}}
                 size={30}
               />
-               {/* <Image
-                        source={appImages.Camera}
-                        style={{ width: wp(6), height: hp(3.5)}}
-                      /> */}
             </View>
             <Text style={style.tabtextcolor}>{!focused ?null:'Transaction'}</Text>
             </View>
           ),
-        }} />
+        }} /> */}
            <Tab.Screen name="Profile" component={Profile}
         options={{
           headerShown: false,

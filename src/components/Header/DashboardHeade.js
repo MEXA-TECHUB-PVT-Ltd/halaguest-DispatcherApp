@@ -16,8 +16,9 @@ import { fontFamily } from '../../constant/fonts';
 
 ////////////////app redux///////////
 import { useSelector } from 'react-redux';
+import finalPropsSelectorFactory from 'react-redux/es/connect/selectorFactory';
 
-const DashboardHeader = ({ navigation, headerlabel,image}) => {
+const DashboardHeader = ({ navigation, headerlabel,headerimage}) => {
     ////////////////////redux/////////////////////
     const { theme } = useSelector(state => state.userReducer);
 
@@ -28,7 +29,7 @@ const DashboardHeader = ({ navigation, headerlabel,image}) => {
           <Text style={style.labelsubtext}>{headerlabel}</Text>
           </View>
           <Image
-            source={require('../../assets/dataimages/user.png')}
+            source={headerimage}
             style={style.logo}
             resizeMode='contain'
           />
