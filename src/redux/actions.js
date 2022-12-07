@@ -48,7 +48,7 @@ export const SET_VEHICLE_OWNERSHIP= 'SET_VEHICLE_OWNERSHIP';
 
 
   ////////////////APP TOP TAB STATES FOR DISPATCHER/////////////////////
-  export const setTopTabdispatcher = top_tab_dispatcher => dispatch => {
+  export const setTopTabDispatcher = top_tab_dispatcher => dispatch => {
     dispatch({
         type: SET_TOP_TAB_DISPATCHER,
         payload: top_tab_dispatcher,

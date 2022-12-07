@@ -23,8 +23,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 
 ////////////////////redux////////////
 import {useSelector, useDispatch} from 'react-redux';
-import { setNavPlace ,setTopTabPayment,setTopTabDriver,
-  setTopTabVehicle,setTopTabDocument,
+import { setNavPlace ,
 setPaymentSubmitId
 } from '../../redux/actions';
 
@@ -56,7 +55,7 @@ const PaymentDetail = ({props}) => {
   const navigation = useNavigation();
 
   /////////////////////////redux///////////////////
-  const {hoteltype, phone_no,payment_submit_id,driver_submit_id  } =
+  const {payment_submit_id,dispatcher_submit_id  } =
     useSelector(state => state.userReducer);
   const dispatch = useDispatch();
 
@@ -172,12 +171,11 @@ const PaymentDetail = ({props}) => {
 
         //////////////////////Api Calling/////////////////
         const updateDispatcherDetail = async (props) => {
-          console.log('here ids payment',driver_submit_id,"payment",props)
               axios({
                 method: 'PUT',
                 url: BASE_URL + 'api/dispacher/updateDispacher',
                 data: {
-                  _id: driver_submit_id,
+                  _id: dispatcher_submit_id,
                   payment_detail_id:props
                 },
               })

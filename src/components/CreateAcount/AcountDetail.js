@@ -54,7 +54,7 @@ const AccountDetail = ({navigation}) => {
   /////////////////////////redux///////////////////
 
   const {hoteltype, phone_no,user_image ,top_tab_dispatcher_payment,dispatcher,dispatcher_id,
-    country_name,state_name,city_name,
+    country_name,state_name,city_name,dispatcher_submit_id
   } =
     useSelector(state => state.userReducer);
   const dispatch = useDispatch();
@@ -70,8 +70,6 @@ const AccountDetail = ({navigation}) => {
   
   //camera and imagepicker
   const refRBSheet = useRef();
-  //Modal States
-  const [modalVisible, setModalVisible] = useState(false);
 
   /////////TextInput References///////////
   const ref_input2 = useRef();
@@ -92,11 +90,7 @@ const AccountDetail = ({navigation}) => {
   //////////////////Account////////////////
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [gender, setGender] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
   const [zipcode, setZipcode] = useState('');
-  const [country, setCountry] =useState('');
   const [street_address, setStreet_address] = useState('');
   const[FCMToken,setFCMToken]=useState()
 
@@ -104,11 +98,9 @@ const AccountDetail = ({navigation}) => {
  const handleValidEmail = (val) => {
   let reg = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w\w+)+$/;
   if (reg.test(val)) {
-      console.log('true')
       return true;
   }
   else {
-      console.log('falsse')
       return false;
   }
 }
@@ -137,12 +129,12 @@ const AccountDetail = ({navigation}) => {
       },
     })
       .then(function (response) {
-        console.log('response', JSON.stringify(response.data));
+        //console.log('response', JSON.stringify(response.data));
         dispatch(setDispatcherSubmitId(response.data.data._id))
-            setloading(0);
-          setdisable(0);
         dispatch(setTopTabDispatcher(false))
         dispatch(setTopTabDispatcherPayment(true))
+        setloading(0);
+        setdisable(0);
 
       })
       .catch(function (error) {
@@ -236,7 +228,7 @@ const AccountDetail = ({navigation}) => {
               </View>
             </TouchableOpacity>
             <View style={Inputstyles.inputview}>
-              <Text style={Inputstyles.inputtoptext}>Company Name{top_tab_dispatcher_payment}</Text>
+              <Text style={Inputstyles.inputtoptext}>Company Name</Text>
                 <View style={Inputstyles.action}>
                   <TextInput
                     onChangeText={setName}

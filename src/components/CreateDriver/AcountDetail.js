@@ -135,7 +135,7 @@ const navigation = useNavigation();
         zip_code: zipcode,
         street_address: street_address,
         name: name,
-        phoneNo: phoneNo,
+        phoneno: phoneNo,
         created_at: date,
         dispacher_id: user,
         status: 'block',

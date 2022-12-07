@@ -98,11 +98,9 @@ const AddGuests = ({navigation}) => {
  const handleValidEmail = (val) => {
   let reg = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w\w+)+$/;
   if (reg.test(val)) {
-      console.log('true')
       return true;
   }
   else {
-      console.log('falsse')
       return false;
   }
 }
@@ -110,8 +108,7 @@ const AddGuests = ({navigation}) => {
   //////////////////////Api Calling/////////////////
   const CreateGuests = async () => {
     var date = new Date();
-    console.log('userid:', date, checked,phone_no,BASE_URL + 'api/driver/createDriver');
-
+    var user = await AsyncStorage.getItem('Userid');
     axios({
       method: 'POST',
       url: BASE_URL + 'api/guest/createGuest',
@@ -127,12 +124,12 @@ const AddGuests = ({navigation}) => {
         name: name,
         phoneNo: phone_no,
         created_at: date,
-        hotel_id:'635b84dc4f7c2392c3abbd1a',
-        status: 'block',
-        device_token: '354ref',
-        driver_location: 'Pir Mehr Ali Shah Arid Agriculture University - PMAS AAUR, Shamsabad, Muree، Road, Punjab، Rawalpindi, 46000',
-        driver_lat: '33.601920',
-        driver_log: '73.038080' 
+        hotel_id:user,
+        status: 'unblock',
+        //device_token: '354ref',
+        // driver_location: 'Pir Mehr Ali Shah Arid Agriculture University - PMAS AAUR, Shamsabad, Muree، Road, Punjab، Rawalpindi, 46000',
+        // driver_lat: '33.601920',
+        // driver_log: '73.038080' 
       },
     })
       .then(function (response) {
@@ -215,7 +212,7 @@ const AddGuests = ({navigation}) => {
           headerlabel={'Add Guest'}
           iconPress={() => { navigation.goBack()}}
           icon={'chevron-back'}
-          searchicon={'trash'}
+          //searchicon={'trash'}
 
         />
           <View style={{flex: 1}}>

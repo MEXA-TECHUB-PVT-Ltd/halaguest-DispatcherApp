@@ -74,8 +74,10 @@ const CreateAccount = ({navigation, route}) => {
           onpresseacrh={() => onSearch()}
         />
         <View style={[TopTabstyles.TopTabView,{paddingHorizontal:wp(12)}]}>
-            <CustomTopTabs title={'Transport Detail'} width={'30%'} state={top_tab_dispatcher} />
-            <CustomTopTabs title={'Payment Details'} width={'30%'} state={!top_tab_dispatcher_payment} />
+            <CustomTopTabs title={'Transport Detail'} width={'30%'} state={!top_tab_dispatcher} />
+            <CustomTopTabs title={'Payment Details'} width={'30%'} 
+            //state={!top_tab_dispatcher_payment} 
+            />
         </View>
         {top_tab_dispatcher  ? (
  <AccountDetail/>

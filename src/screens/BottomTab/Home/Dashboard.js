@@ -1,25 +1,13 @@
 import React, {useEffect, useState, useRef} from 'react';
 import {
   SafeAreaView,
-  FlatList,
   StatusBar,
-  ImageBackground,
-  BackHandler,
   ScrollView,
   Image,
   View,
   Text,
   TouchableOpacity,
-  TextInput,
-  ActivityIndicator,
 } from 'react-native';
-
-////////////////////app pakages//////////////
-import {Checkbox} from 'react-native-paper';
-
-//////////////////app icons////////////////
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import Icon from 'react-native-vector-icons/Ionicons';
 
 //////////////////////app components///////////////
 import DashboardHeader from '../../../components/Header/DashboardHeade';
