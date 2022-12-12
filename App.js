@@ -24,6 +24,8 @@ import AddDriver from './src/screens/StackScreens/Drivers/AddDriver';
 import ViewPaymentDetail from './src/screens/StackScreens/UpdateProfile/ViewPayment';
 import DriverOrders from './src/screens/StackScreens/Drivers/DriverOrder';
 import Location from './src/screens/StackScreens/Location/Location';
+import TripRoute from './src/screens/StackScreens/Trip/TripRoute/TripRoute';
+import TripCompleted from './src/screens/StackScreens/Trip/TripRoute/TripCompleted';
 
 const Stack = createNativeStackNavigator();
 function App() {
@@ -159,6 +161,20 @@ function App() {
                    <Stack.Screen
             name="Location"
             component={Location}
+            options={{
+              headerShown: false,
+            }}
+          />
+                             <Stack.Screen
+            name="TripRoute"
+            component={TripRoute}
+            options={{
+              headerShown: false,
+            }}
+          />
+                             <Stack.Screen
+            name="TripCompleted"
+            component={TripCompleted}
             options={{
               headerShown: false,
             }}
